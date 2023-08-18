@@ -709,7 +709,7 @@ int main(int argc, char **argv)
         {
             orchDaemon->setFabricEnabled(true);
             orchDaemon->setFabricPortStatEnabled(true);
-            orchDaemon->setFabricQueueStatEnabled(true);
+            orchDaemon->setFabricQueueStatEnabled(false);
         }
     }
     else
