@@ -2,7 +2,7 @@ FROM docker-sonic-vs
 
 ARG docker_container_name
 ARG need_dbg
-ENV build_dir
+ARG build_dir
 ENV BUILD_DIR=$build_dir
 
 COPY ["debs", "/debs"]

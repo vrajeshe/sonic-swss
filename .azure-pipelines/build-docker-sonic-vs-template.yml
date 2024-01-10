@@ -144,7 +144,8 @@ jobs:
 
       pushd .azure-pipelines
 
-      build_args="--build-arg build_dir=$(pwd)"
+      build_dir=$(grep BUILD_DIR $(Build.ArtifactStagingDirectory)/download/build.info | cut -d= -f2)
+      build_args="--build-arg build_dir=$build_dir"
       if [ '${{ parameters.asan }}' == True ]; then
         build_args="$build_args --build-arg need_dbg=y"
       fi
