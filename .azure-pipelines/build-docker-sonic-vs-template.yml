@@ -141,6 +141,7 @@ jobs:
 
       find $(Build.ArtifactStagingDirectory)/download/sairedis -name '*.deb' -exec cp "{}" .azure-pipelines/docker-sonic-vs/debs \;
       cp -v $(Build.ArtifactStagingDirectory)/download/*.deb .azure-pipelines/docker-sonic-vs/debs
+      cp -v $(Build.ArtifactStagingDirectory)/download/coverage.info $(Build.ArtifactStagingDirectory)/
 
       pushd .azure-pipelines
 
