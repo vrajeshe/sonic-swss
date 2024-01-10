@@ -52,6 +52,7 @@ jobs:
 
   steps:
   - script: |
+      ip a show
       ls -A1 | xargs -I{} sudo rm -rf {}
     displayName: "Clean workspace"
   - checkout: self
@@ -83,7 +84,6 @@ jobs:
 
   - script: |
       set -ex
-      ip a show dev eth0
       sudo .azure-pipelines/build_and_install_module.sh
 
       sudo apt-get install -y libhiredis0.14 libyang0.16
@@ -131,7 +131,7 @@ jobs:
 
       test_set=()
       # Run 20 tests as a set.
-      last_test=${all_tests[-1]}
+      last_test=${all_tests[@]: -1}
       for test in ${all_tests}; do
         test_set+=("${test}")
         if [ ${#test_set[@]} -ge 20 ] || [ $test == $last_test ]; then
