@@ -44,15 +44,16 @@ jobs:
 - job:
   displayName: vstest
   timeoutInMinutes: ${{ parameters.timeout }}
-  variables:
-    DIFF_COVER_CHECK_THRESHOLD: 80
-    DIFF_COVER_ENABLE: 'true'
+  ${{ if parameters.archive_gcov }}:
+    variables:
+      DIFF_COVER_CHECK_THRESHOLD: 80
+      DIFF_COVER_ENABLE: 'true'
 
   pool: sonic-common
 
   steps:
   - script: |
-      ip a show
+      ip a show dev eth0 || true
       ls -A1 | xargs -I{} sudo rm -rf {}
     displayName: "Clean workspace"
   - checkout: self
@@ -122,16 +123,16 @@ jobs:
 
       cp $(Build.ArtifactStagingDirectory)/download/coverage.info ./
 
-      all_tests=$(ls test_*.py)
+      all_tests=$(ls test_*.py | xargs)
       all_tests="${all_tests} p4rt"
 
       if [ -n '${{ parameters.run_tests_pattern }}' ]; then
-        all_tests=" $(ls ${{ parameters.run_tests_pattern }}) "
+        all_tests=" $(ls ${{ parameters.run_tests_pattern }} | xargs) "
       fi
 
       test_set=()
       # Run 20 tests as a set.
-      last_test=${all_tests[@]: -1}
+      last_test=$(echo $all_tests | awk '{print $NF}')
       for test in ${all_tests}; do
         test_set+=("${test}")
         if [ ${#test_set[@]} -ge 20 ] || [ $test == $last_test ]; then
@@ -150,9 +151,11 @@ jobs:
         fi
       done
 
-      cat *coverage.info > all_coverage.info
-      lcov_cobertura all_coverage.info  -o coverage.xml
-      ls *coverage.info coverage.xml -l
+      if [ '${{ parameters.archive_gcov }}' == True ]; then
+        cat *coverage.info > all_coverage.info
+        lcov_cobertura all_coverage.info  -o coverage.xml
+        ls *coverage.info coverage.xml -l
+      fi
 
       rm -rf $(Build.ArtifactStagingDirectory)/download
     displayName: "Run vs tests"
