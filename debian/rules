@@ -44,7 +44,7 @@ override_dh_auto_install:
 ifeq ($(ENABLE_GCOV), y)
 	mkdir -p debian/swss/tmp/gcov
 	lcov -c --directory . --no-external  --output-file coverage.info
-	find ./ -type f -regex '.*\.\(h\|ccp\|gcno|info\)' | tar -cf debian/swss/tmp/gcov/gcov-source.tar -T -
+	find ./ -type f -regex '.*\.\(h\|cpp\|gcno\|info\)' | tar -cf debian/swss/tmp/gcov/gcov-source.tar -T -
 	#sh ./tests/gcov_support.sh collect swss
 endif
 
