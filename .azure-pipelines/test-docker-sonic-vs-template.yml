@@ -121,8 +121,6 @@ jobs:
         params=" ${params} --num-ports=${{ parameters.num_ports }} "
       fi
 
-      cp $(Build.ArtifactStagingDirectory)/download/coverage.info ./
-
       all_tests=$(ls test_*.py | xargs)
       all_tests="${all_tests} p4rt"
 
@@ -131,13 +129,14 @@ jobs:
       fi
 
       test_set=()
+      image_name=docker-sonic-vs:$(Build.DefinitionName).$(Build.BuildNumber).asan-${{ parameters.asan }}
       # Run 20 tests as a set.
       last_test=$(echo $all_tests | awk '{print $NF}')
       for test in ${all_tests}; do
         test_set+=("${test}")
         if [ ${#test_set[@]} -ge 20 ] || [ $test == $last_test ]; then
           test_name=$(echo "${test_set[0]}" | cut -d "." -f 1)
-          echo "${test_set[*]}" | xargs sudo py.test -v --force-flaky --junitxml="${test_name}_tr.xml" $params --imgname=docker-sonic-vs:$(Build.DefinitionName).$(Build.BuildNumber).asan-${{ parameters.asan }}
+          echo "${test_set[*]}" | xargs sudo py.test -v --force-flaky --junitxml="${test_name}_tr.xml" $params --imgname=$image_name
           container_count=$(docker ps -q -a | wc -l)
           if [ '${{ parameters.archive_gcov }}' == True ] && [ ${container_count} -gt 0 ]; then
             for container in $(docker ps | grep docker-sonic-vs | awk '{print $1}'); do
@@ -153,13 +152,11 @@ jobs:
       done
 
       if [ '${{ parameters.archive_gcov }}' == True ]; then
-        cat *coverage.info > all_coverage.info
-        lcov_cobertura all_coverage.info  -o coverage.xml
-        ls *coverage.info coverage.xml -l
+        cp $(Build.ArtifactStagingDirectory)/download/coverage.info ./
+        docker run --rm -v $(pwd):/tmp/s --entrypoint bash $image_name -c 'cd $BUILD_DIR; cat /tmp/s/*coverage.info > coverage.info; lcov_cobertura coverage.info -o /tmp/s/coverage.xml'
+        cp coverage.xml $(Build.ArtifactStagingDirectory)/
+        cp *coverage.info $(Build.ArtifactStagingDirectory)/
       fi
-
-      cp coverage.xml $(Build.ArtifactStagingDirectory)/
-      cp *coverage.info $(Build.ArtifactStagingDirectory)/
 
       rm -rf $(Build.ArtifactStagingDirectory)/download
     displayName: "Run vs tests"

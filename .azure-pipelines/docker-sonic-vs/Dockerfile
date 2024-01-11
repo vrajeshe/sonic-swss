@@ -28,6 +28,6 @@ RUN apt-get update
 
 RUN apt-get -y install lcov
 
-RUN pip install gcovr
+RUN pip3 install lcov_cobertura
 
 RUN if [ -n "$BUILD_DIR" ]; then mkdir -p $BUILD_DIR && tar -xf /tmp/gcov/gcov-source.tar -C $BUILD_DIR; fi
