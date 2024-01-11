@@ -158,6 +158,9 @@ jobs:
         ls *coverage.info coverage.xml -l
       fi
 
+      cp coverage.xml $(Build.ArtifactStagingDirectory)/
+      cp *coverage.info $(Build.ArtifactStagingDirectory)/
+
       rm -rf $(Build.ArtifactStagingDirectory)/download
     displayName: "Run vs tests"
     continueOnError: ${{ parameters.asan }}
@@ -180,7 +183,7 @@ jobs:
   - task: PublishCodeCoverageResults@1
     inputs:
       codeCoverageTool: Cobertura
-      summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage.xml'
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/test/coverage.xml'
       reportDirectory: '$(System.DefaultWorkingDirectory)/htmlcov/'
     displayName: 'Publish test coverage'
 

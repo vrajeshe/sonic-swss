@@ -30,4 +30,4 @@ RUN apt-get -y install lcov
 
 RUN pip install gcovr
 
-RUN [ -n "$BUILD_DIR" ] && mkdir -p $BUILD_DIR && tar -xf /tmp/gcov/gcov-source.tar -C $BUILD_DIR
+RUN if [ -n "$BUILD_DIR" ]; then mkdir -p $BUILD_DIR && tar -xf /tmp/gcov/gcov-source.tar -C $BUILD_DIR; fi
