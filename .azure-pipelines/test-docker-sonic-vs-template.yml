@@ -141,8 +141,9 @@ jobs:
           container_count=$(docker ps -q -a | wc -l)
           if [ '${{ parameters.archive_gcov }}' == True ] && [ ${container_count} -gt 0 ]; then
             for container in $(docker ps | grep docker-sonic-vs | awk '{print $1}'); do
-                docker exec $container bash -c 'cd $BUILD_DIR; lcov -c --directory . --no-external  --output-file /tmp/coverage.info'
-                docker cp $container:/tmp/coverage.info $container.coverage.info
+              echo "collecting the container $container ..."
+              docker exec $container bash -c 'cd $BUILD_DIR; lcov -c --directory . --no-external --output-file /tmp/coverage.info' 2>&1 | grep -v libswsscommon | grep -v sonic_db_cli | grep -v pyext_py3__swsscommon_la
+              docker cp $container:/tmp/coverage.info $container.coverage.info
             done
             docker stop $(docker ps -q -a)
             docker rm $(docker ps -q -a)
