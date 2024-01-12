@@ -153,9 +153,9 @@ jobs:
 
       if [ '${{ parameters.archive_gcov }}' == True ]; then
         cp $(Build.ArtifactStagingDirectory)/download/coverage.info ./
-        docker run --rm -v $(pwd):/tmp/s --entrypoint bash $image_name -c 'cd $BUILD_DIR; cat /tmp/s/*coverage.info > coverage.info; lcov_cobertura coverage.info -o /tmp/s/coverage.xml'
-        cp coverage.xml $(Build.ArtifactStagingDirectory)/
-        cp *coverage.info $(Build.ArtifactStagingDirectory)/
+        docker run --rm -v $(System.DefaultWorkingDirectory):/tmp/s --entrypoint bash $image_name -c 'cd $BUILD_DIR; cat /tmp/s/tests/*coverage.info > coverage.info; lcov_cobertura coverage.info -o /tmp/s/coverage.xml'
+        cp coverage.xml $(System.DefaultWorkingDirectory)/
+        cp *coverage.info  coverage.xml $(Build.ArtifactStagingDirectory)/
       fi
 
       rm -rf $(Build.ArtifactStagingDirectory)/download
@@ -180,7 +180,7 @@ jobs:
   - task: PublishCodeCoverageResults@1
     inputs:
       codeCoverageTool: Cobertura
-      summaryFileLocation: '$(System.DefaultWorkingDirectory)/test/coverage.xml'
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage.xml'
       reportDirectory: '$(System.DefaultWorkingDirectory)/htmlcov/'
     displayName: 'Publish test coverage'
 
