@@ -1796,13 +1796,7 @@ def manage_dvs(request) -> str:
 
         else:
             # First generate GCDA files for GCov
-            dvs.runcmd('killall5 -15')
-            # If not re-creating the DVS, restart container
-            # between modules to ensure a consistent start state
-            dvs.net_cleanup()
-            dvs.destroy_servers()
-            dvs.create_servers()
-            dvs.restart()
+            dvs.runcmd('killall5 -10')
 
         return dvs
 
