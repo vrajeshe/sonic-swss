@@ -1797,6 +1797,11 @@ def manage_dvs(request) -> str:
         else:
             # First generate GCDA files for GCov
             dvs.runcmd('killall5 -10')
+            time.sleep(1)
+            dvs.net_cleanup()
+            dvs.destroy_servers()
+            dvs.create_servers()
+            dvs.restart()
 
         return dvs
 
