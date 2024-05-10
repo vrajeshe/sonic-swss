@@ -3397,8 +3397,10 @@ bool PortsOrch::bake()
     addExistingData(APP_LAG_MEMBER_TABLE_NAME);
     addExistingData(APP_VLAN_TABLE_NAME);
     addExistingData(APP_VLAN_MEMBER_TABLE_NAME);
-    addExistingData(STATE_TRANSCEIVER_INFO_TABLE_NAME);
-
+    if (saiHwTxSignalSupported && saiTxReadyNotifySupported)
+    {
+        addExistingData(STATE_TRANSCEIVER_INFO_TABLE_NAME);
+    }
     return true;
 }
 
