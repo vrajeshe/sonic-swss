@@ -14,6 +14,7 @@ using namespace std;
 #define LAG_ID_ALLOCATOR_ERROR_GET_ENTRY_NOT_FOUND    -2
 #define LAG_ID_ALLOCATOR_ERROR_INVALID_OP             -3
 #define LAG_ID_ALLOCATOR_ERROR_DB_ERROR               -4
+#define LAG_ID_ALLOCATOR_ERROR_BAD_SWITCH_ID          -5
 
 class LagIdAllocator
 {
@@ -25,14 +26,23 @@ public:
 public:
 
     int32_t lagIdAdd(
-            _In_ const string &pcname,
-            _In_ int32_t lag_id);
+        _In_ const string &hostname,
+        _In_ const string &asicname,
+        _In_ int32_t switch_id
+        _In_ const string &pcname,
+        _In_ int32_t lag_id);
 
     int32_t lagIdDel(
-            _In_ const string &pcname);
+        _In_ const string &hostname,
+        _In_ const string &asicname,
+        _In_ int32_t switch_id
+        _In_ const string &pcname);
 
     int32_t lagIdGet(
-            _In_ const string &pcname);
+        _In_ const string &hostname,
+        _In_ const string &asicname,
+        _In_ int32_t switch_id
+        _In_ const string &pcname);
 
 private:
 

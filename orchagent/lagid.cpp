@@ -16,6 +16,9 @@ LagIdAllocator::LagIdAllocator(
 }
 
 int32_t LagIdAllocator::lagIdAdd(
+        _In_ const string &hostname,
+        _In_ const string &asicname,
+        _In_ int32_t switch_id
         _In_ const string &pcname,
         _In_ int32_t lag_id)
 {
@@ -26,6 +29,9 @@ int32_t LagIdAllocator::lagIdAdd(
 
     vector<string> args;
     args.push_back("add");
+    args.push_back(hostname);
+    args.push_back(asicname);
+    args.push_back(to_string(switch_id));
     args.push_back(pcname);
     args.push_back(to_string(lag_id));
 
@@ -44,6 +50,9 @@ int32_t LagIdAllocator::lagIdAdd(
 }
 
 int32_t LagIdAllocator::lagIdDel(
+        _In_ const string &hostname,
+        _In_ const string &asicname,
+        _In_ int32_t switch_id
         _In_ const string &pcname)
 {
     SWSS_LOG_ENTER();
@@ -53,6 +62,9 @@ int32_t LagIdAllocator::lagIdDel(
 
     vector<string> args;
     args.push_back("del");
+    args.push_back(hostname);
+    args.push_back(asicname);
+    args.push_back(to_string(switch_id));
     args.push_back(pcname);
 
     set<string> ret = runRedisScript(*m_dbConnector, m_shaLagId, keys, args);
@@ -70,6 +82,9 @@ int32_t LagIdAllocator::lagIdDel(
 }
 
 int32_t LagIdAllocator::lagIdGet(
+        _In_ const string &hostname,
+        _In_ const string &asicname,
+        _In_ int32_t switch_id
         _In_ const string &pcname)
 {
     SWSS_LOG_ENTER();
@@ -79,6 +94,9 @@ int32_t LagIdAllocator::lagIdGet(
 
     vector<string> args;
     args.push_back("get");
+    args.push_back(hostname);
+    args.push_back(asicname);
+    args.push_back(to_string(switch_id));
     args.push_back(pcname);
 
     set<string> ret = runRedisScript(*m_dbConnector, m_shaLagId, keys, args);

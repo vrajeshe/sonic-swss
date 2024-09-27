@@ -10,16 +10,42 @@
 -- return -3 if invalid operation
 
 local op = ARGV[1]
-local pcname = ARGV[2]
+local hostname = ARGV[2]
+local asicname = ARGV[3]
+local switchid = tonumber(ARGV[4])
+local pcname = ARGV[5]
 
-local lagid_start = tonumber(redis.call("get", "SYSTEM_LAG_ID_START"))
-local lagid_end = tonumber(redis.call("get", "SYSTEM_LAG_ID_END"))
+local chassis_lag_id_start tonumber(redis.call("get", "SYSTEM_LAG_ID_START")
+local chassis_lag_id_end tonumber(redis.call("get", "SYSTEM_LAG_ID_END")
+
+local system_lag_name = hostname.."|"..asicname.."|"..pcname
+
+-- add to chassis db in future?
+local max_system_lag_count_per_asic = tonumber("24")
+local switch_index = switchid
+
+if switch_id != 0 then
+    switch_index = tonumber(switch_id//2)
+end
+
+local lagid_start = switch_index * max_system_lag_count_per_asic + 1 )
+local lagid_end = (switch_index + 1) * max_system_lag_count_per_asic
+
+if lag_start < chassis_lag_id_start then
+    return -5
+end
+
+if lag_end >  chassis_lag_id_end then
+    return -5
+end
+
+local lag_id_set_name = "SYSTEM_LAG_ID_SET|"..hostname.."|"..asicname
 
 if op == "add" then
 
-    local plagid = tonumber(ARGV[3])
+    local plagid = tonumber(ARGV[6])
 
-    local dblagid = redis.call("hget", "SYSTEM_LAG_ID_TABLE", pcname)
+    local dblagid = redis.call("hget", "SYSTEM_LAG_ID_TABLE", system_lag_name)
 
     if dblagid then
         dblagid = tonumber(dblagid)
@@ -38,20 +64,20 @@ if op == "add" then
         -- proposed lag id is different than that in database OR
         -- the portchannel does not exist in the database
         -- If proposed lagid is available, return the same proposed lag id
-        if redis.call("sismember", "SYSTEM_LAG_ID_SET", tostring(plagid)) == 0 then
-            redis.call("sadd", "SYSTEM_LAG_ID_SET", tostring(plagid))
-            redis.call("srem", "SYSTEM_LAG_ID_SET", tostring(dblagid))
-            redis.call("hset", "SYSTEM_LAG_ID_TABLE", pcname, tostring(plagid))
+        if redis.call("sismember", lag_id_set_name, tostring(plagid)) == 0 then
+            redis.call("sadd", lag_id_set_name, tostring(plagid))
+            redis.call("srem", lag_id_set_name, tostring(dblagid))
+            redis.call("hset", "SYSTEM_LAG_ID_TABLE", system_lag_name, tostring(plagid))
             return plagid
         end
     end
 
     local lagid = lagid_start
     while lagid <= lagid_end do
-        if redis.call("sismember", "SYSTEM_LAG_ID_SET", tostring(lagid)) == 0 then
-            redis.call("sadd", "SYSTEM_LAG_ID_SET", tostring(lagid))
-            redis.call("srem", "SYSTEM_LAG_ID_SET", tostring(dblagid))
-            redis.call("hset", "SYSTEM_LAG_ID_TABLE", pcname, tostring(lagid))
+        if redis.call("sismember", lag_id_set_name, tostring(lagid)) == 0 then
+            redis.call("sadd", lag_id_set_name, tostring(lagid))
+            redis.call("srem", lag_id_set_name, tostring(dblagid))
+            redis.call("hset", "SYSTEM_LAG_ID_TABLE", system_lag_name, tostring(lagid))
             return lagid
         end
         lagid = lagid + 1
@@ -63,10 +89,10 @@ end
 
 if op == "del" then
 
-    if redis.call("hexists", "SYSTEM_LAG_ID_TABLE", pcname) == 1 then
-        local lagid = redis.call("hget", "SYSTEM_LAG_ID_TABLE", pcname)
-        redis.call("srem", "SYSTEM_LAG_ID_SET", lagid)
-        redis.call("hdel", "SYSTEM_LAG_ID_TABLE", pcname)
+    if redis.call("hexists", "SYSTEM_LAG_ID_TABLE", system_lag_name) == 1 then
+        local lagid = redis.call("hget", lag_id_set_name, pcname)
+        redis.call("srem", lag_id_set_name, lagid)
+        redis.call("hdel", "lag_id_set_name", pcname)
         return tonumber(lagid)
     end
 
@@ -76,8 +102,8 @@ end
 
 if op == "get" then
 
-    if redis.call("hexists", "SYSTEM_LAG_ID_TABLE", pcname) == 1 then
-        local lagid = redis.call("hget", "SYSTEM_LAG_ID_TABLE", pcname)
+    if redis.call("hexists", "SYSTEM_LAG_ID_TABLE", system_lag_name) == 1 then
+        local lagid = redis.call("hget", "SYSTEM_LAG_ID_TABLE", system_lag_name)
         return tonumber(lagid)
     end
 

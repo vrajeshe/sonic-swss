@@ -5654,10 +5654,10 @@ bool PortsOrch::addLag(string lag_alias, uint32_t spa_id, int32_t switch_id)
             // Get the local switch id and derive the system lag name.
 
             switch_id = gVoqMySwitchId;
-            system_lag_alias = gMyHostName + "|" + gMyAsicName + "|" + lag_alias;
+            //system_lag_alias = gMyHostName + "|" + gMyAsicName + "|" + lag_alias;
 
             // Allocate unique lag id
-            spa_id = m_lagIdAllocator->lagIdAdd(system_lag_alias, 0);
+            spa_id = m_lagIdAllocator->lagIdAdd(gMyHostName, gMyAsicName, switch_id, lag_alias, 0);
 
             if ((int32_t)spa_id <= 0)
             {
@@ -5783,7 +5783,7 @@ bool PortsOrch::removeLag(Port lag)
             int32_t rv;
             int32_t spa_id = lag.m_system_lag_info.spa_id;
 
-            rv = m_lagIdAllocator->lagIdDel(lag.m_system_lag_info.alias);
+            rv = m_lagIdAllocator->lagIdDel(gMyHostName, gMyAsicName, lag.m_system_lag_info.switch_id, lag_alias);
 
             if (rv != spa_id)
             {
