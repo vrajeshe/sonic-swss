@@ -10,7 +10,7 @@ parameters:
 - name: pool
   type: string
   values:
-  - sonicbld
+  - sonicbld-1es
   - sonicbld-armhf
   - sonicbld-arm64
   - default
@@ -128,7 +128,7 @@ jobs:
       artifact: ${{ parameters.sairedis_artifact_name }}
       runVersion: 'latestFromBranch'
       runBranch: 'refs/heads/${{ parameters.sairedis_artifact_branch }}'
-      allowPartiallySucceededBuilds: true
+      allowFailedBuilds: true
       path: $(Build.ArtifactStagingDirectory)/download/sairedis
       patterns: |
         ${{ parameters.sairedis_artifact_pattern }}/libsaivs_*.deb
