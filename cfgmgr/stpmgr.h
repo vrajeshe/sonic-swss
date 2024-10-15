@@ -39,6 +39,7 @@
 #define INVALID_MODE    -1
 
 #define MAX_VLANS   4096
+
 // Maximum number of instances supported
 #define L2_INSTANCE_MAX             MAX_VLANS
 #define STP_DEFAULT_MAX_INSTANCES   255

@@ -239,7 +239,7 @@ void StpMgr::doStpVlanTask(Consumer &consumer)
             vector<PORT_ATTR> port_list;
             if (m_vlanInstMap[vlan_id] == INVALID_INSTANCE)
             {
-                /* VLAN is being added to the instance. Get all members*/
+                /* VLAN is being added to the instance. Get all members for VLAN Mapping*/
                 if (l2ProtoEnabled == L2_PVSTP)
                 {
                     newInstance = 1;

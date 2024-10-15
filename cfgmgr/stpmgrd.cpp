@@ -77,7 +77,7 @@ int main(int argc, char **argv)
 
         StpMgr stpmgr(&conf_db, &app_db, &state_db, tables);
 
-        // Open a Unix Domain Socket with STPd
+        // Open a Unix Domain Socket with STPd for communication
         stpmgr.ipcInitStpd();
         stpmgr.isPortInitDone(&app_db);
         
