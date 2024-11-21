@@ -69,7 +69,7 @@ sai_object_id_t StpOrch::addStpInstance(sai_uint16_t stp_instance)
         return SAI_NULL_OBJECT_ID;
     }
     m_stpInstToOid[stp_instance] = stp_oid;
-    SWSS_LOG_NOTICE("Added STP instance:%hu oid:%lx", stp_instance, stp_oid);
+    SWSS_LOG_NOTICE("Added STP instance:%hu oid:%" PRIx64 "", stp_instance, stp_oid);
     return stp_oid;
 }
 
@@ -101,12 +101,12 @@ bool StpOrch::removeStpInstance(sai_uint16_t stp_instance)
     sai_status_t status = sai_stp_api->remove_stp(stp_oid);
     if (status != SAI_STATUS_SUCCESS)
     {
-        SWSS_LOG_ERROR("Failed to remove STP instance %u oid %lx status %u", stp_instance, stp_oid, status);
+        SWSS_LOG_ERROR("Failed to remove STP instance %u oid %" PRIx64 "status %u", stp_instance, stp_oid, status);
         return false;
     }
 
     m_stpInstToOid.erase(stp_instance);
-    SWSS_LOG_NOTICE("Removed STP instance:%hu oid:%lx", stp_instance, stp_oid);
+    SWSS_LOG_NOTICE("Removed STP instance:%hu oid:%" PRIx64 "", stp_instance, stp_oid);
     return true;
 }
 
@@ -173,7 +173,7 @@ bool StpOrch::removeVlanFromStpInstance(string vlan_alias, sai_uint16_t stp_inst
         return false;
     }
 
-    SWSS_LOG_NOTICE("Remove %s from instance:%d add instance:%lx", vlan_alias.c_str(), vlan.m_stp_id, m_defaultStpId);
+    SWSS_LOG_NOTICE("Remove %s from instance:%d add instance:%" PRIx64 "", vlan_alias.c_str(), vlan.m_stp_id, m_defaultStpId);
     
     removeStpInstance(vlan.m_stp_id);
     vlan.m_stp_id = -1;
@@ -231,7 +231,7 @@ sai_object_id_t StpOrch::addStpPort(Port &port, sai_uint16_t stp_instance)
         return SAI_NULL_OBJECT_ID;
     }
 
-    SWSS_LOG_NOTICE("Add STP port %s instance %d oid %lx size %lu", port.m_alias.c_str(), stp_instance, stp_port_id, port.m_stp_port_ids.size());
+    SWSS_LOG_NOTICE("Add STP port %s instance %d oid %" PRIx64 " size %lu", port.m_alias.c_str(), stp_instance, stp_port_id, port.m_stp_port_ids.size());
 
     port.m_stp_port_ids[stp_instance] = stp_port_id;
     gPortsOrch->setPort(port.m_alias, port);
@@ -249,12 +249,12 @@ bool StpOrch::removeStpPort(Port &port, sai_uint16_t stp_instance)
     sai_status_t status = sai_stp_api->remove_stp_port(port.m_stp_port_ids[stp_instance]);
     if (status != SAI_STATUS_SUCCESS)
     {
-        SWSS_LOG_ERROR("Failed to remove STP port %s instance %d oid %lx status %x", port.m_alias.c_str(), stp_instance, 
+        SWSS_LOG_ERROR("Failed to remove STP port %s instance %d oid %" PRIx64 " status %x", port.m_alias.c_str(), stp_instance, 
                 port.m_stp_port_ids[stp_instance], status);
         return false;
     }
 
-    SWSS_LOG_NOTICE("Remove STP port %s instance %d oid %lx size %lu", port.m_alias.c_str(), stp_instance, 
+    SWSS_LOG_NOTICE("Remove STP port %s instance %d oid %" PRIx64 " size %lu", port.m_alias.c_str(), stp_instance, 
             port.m_stp_port_ids[stp_instance], port.m_stp_port_ids.size());
     port.m_stp_port_ids.erase(stp_instance);
     gPortsOrch->setPort(port.m_alias, port);
@@ -280,11 +280,11 @@ bool StpOrch::removeStpPorts(Port &port)
         sai_status_t status = sai_stp_api->remove_stp_port(stp_port_oid);
         if (status != SAI_STATUS_SUCCESS)
         {
-            SWSS_LOG_ERROR("Failed to remove STP port %s instance %d oid %lx status %x", port.m_alias.c_str(), stp_instance, stp_port_oid, status);
+            SWSS_LOG_ERROR("Failed to remove STP port %s instance %d oid %" PRIx64 " status %x", port.m_alias.c_str(), stp_instance, stp_port_oid, status);
         }
         else
         {
-            SWSS_LOG_NOTICE("Remove STP port %s instance %d oid %lx", port.m_alias.c_str(), stp_instance, stp_port_oid);
+            SWSS_LOG_NOTICE("Remove STP port %s instance %d oid %" PRIx64 "", port.m_alias.c_str(), stp_instance, stp_port_oid);
         }
     }
 
