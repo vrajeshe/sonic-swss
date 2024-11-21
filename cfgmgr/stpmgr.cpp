@@ -282,7 +282,7 @@ void StpMgr::doStpVlanTask(Consumer &consumer)
                 {
                     attr[i].mode    = p->mode;
                     attr[i].enabled = p->enabled;
-                    strncpy(attr[i].intf_name, p->intf_name, IFNAMSIZ-1);
+                    strncpy(attr[i].intf_name, p->intf_name, IFNAMSIZ);
                     SWSS_LOG_DEBUG("MemIntf: %s", p->intf_name);
                     i++;
                 }
