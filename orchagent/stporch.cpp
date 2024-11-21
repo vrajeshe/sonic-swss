@@ -231,7 +231,7 @@ sai_object_id_t StpOrch::addStpPort(Port &port, sai_uint16_t stp_instance)
         return SAI_NULL_OBJECT_ID;
     }
 
-    SWSS_LOG_NOTICE("Add STP port %s instance %d oid %" PRIx64 " size %lu", port.m_alias.c_str(), stp_instance, stp_port_id, port.m_stp_port_ids.size());
+    SWSS_LOG_NOTICE("Add STP port %s instance %d oid %" PRIx64 " size %zu", port.m_alias.c_str(), stp_instance, stp_port_id, port.m_stp_port_ids.size());
 
     port.m_stp_port_ids[stp_instance] = stp_port_id;
     gPortsOrch->setPort(port.m_alias, port);
@@ -254,7 +254,7 @@ bool StpOrch::removeStpPort(Port &port, sai_uint16_t stp_instance)
         return false;
     }
 
-    SWSS_LOG_NOTICE("Remove STP port %s instance %d oid %" PRIx64 " size %lu", port.m_alias.c_str(), stp_instance, 
+    SWSS_LOG_NOTICE("Remove STP port %s instance %d oid %" PRIx64 " size %zu", port.m_alias.c_str(), stp_instance, 
             port.m_stp_port_ids[stp_instance], port.m_stp_port_ids.size());
     port.m_stp_port_ids.erase(stp_instance);
     gPortsOrch->setPort(port.m_alias, port);
