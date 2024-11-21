@@ -174,36 +174,6 @@ typedef struct STP_VLAN_MEM_CONFIG_MSG {
     int         priority;
 }__attribute__ ((packed))STP_VLAN_MEM_CONFIG_MSG;
 
-typedef struct STP_DEBUG_OPT {
-#define STPCTL_DBG_SET_ENABLED  0x0001
-#define STPCTL_DBG_SET_VERBOSE  0x0002
-#define STPCTL_DBG_SET_BPDU_RX  0x0004
-#define STPCTL_DBG_SET_BPDU_TX  0x0008
-#define STPCTL_DBG_SET_EVENT    0x0010
-#define STPCTL_DBG_SET_PORT     0x0020
-#define STPCTL_DBG_SET_VLAN     0x0040
-#define STPCTL_DBG_SHOW         0x0080
-    uint16_t           flags;
-
-    uint8_t            enabled:1;
-    uint8_t            verbose:1;
-    uint8_t            bpdu_rx:1;
-    uint8_t            bpdu_tx:1;
-    uint8_t            event:1;
-    uint8_t            port:1;
-    uint8_t            vlan:1;
-    uint8_t            spare:1;
-} STP_DEBUG_OPT;
-
-typedef struct STP_CTL_MSG {
-    int             cmd_type;
-    int             vlan_id;
-    char            intf_name[IFNAMSIZ];
-    int             level;
-    STP_DEBUG_OPT   dbg;
-}__attribute__ ((packed))STP_CTL_MSG;
-
-#
 namespace swss {
 
 class StpMgr : public Orch
