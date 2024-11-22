@@ -30,6 +30,7 @@
 #include "producerstatetable.h"
 #include <stddef.h>
 #include <algorithm>
+#include "stp_ipc.h"
 
 #define STPMGRD_SOCK_NAME "/var/run/stpmgrd.sock"
 
@@ -54,7 +55,7 @@
 #define FREE_ALL_INST_ID() l2InstPool.reset()
 
 #define IS_INST_ID_AVAILABLE() (l2InstPool.count() < max_stp_instances) ? true : false
-
+#if 0
 #define STPD_SOCK_NAME "/var/run/stpipc.sock"
 
 typedef enum L2_PROTO_MODE{
@@ -173,7 +174,7 @@ typedef struct STP_VLAN_MEM_CONFIG_MSG {
     int         path_cost;
     int         priority;
 }__attribute__ ((packed))STP_VLAN_MEM_CONFIG_MSG;
-
+#endif
 namespace swss {
 
 class StpMgr : public Orch
