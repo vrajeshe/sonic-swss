@@ -1,5 +1,17 @@
-#include "gtest/gtest.h"
-#include "gmock/gmock.h"
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
+#define private public // make Directory::m_values available to clean it.
+#include "directory.h"
+#undef private
+#define protected public
+#include "orch.h"
+#undef protected
+#include "orchdaemon.h"
+#include "dbconnector.h"
+#include "ut_helper.h"
+#include "mock_orchagent_main.h"
+#include "mock_table.h"
 #include "stporch.h"
 #include "mock_sai_stp.h"
 
