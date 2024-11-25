@@ -7,9 +7,8 @@
 #define protected public
 #include "orch.h"
 #undef protected
-#include "orchdaemon.h"
-#include "dbconnector.h"
 #include "ut_helper.h"
+#include "dbconnector.h"
 #include "mock_orchagent_main.h"
 #include "mock_table.h"
 #include "stporch.h"
