@@ -12,8 +12,6 @@ MockSaiStp* mock_sai_stp = nullptr;
 class StpOrchTest : public ::testing::Test {
 protected:
     unique_ptr<StpOrch> stpOrch;
-    unique_ptr<MockTable> mockTable;
-    unique_ptr<MockPort> mockPort;
 
     void SetUp() override {
         // Set up mock SAI STP

@@ -63,6 +63,7 @@ tests_SOURCES = aclorch_ut.cpp \
                 neighorch_ut.cpp \
                 dashorch_ut.cpp \
                 twamporch_ut.cpp \
+                stporch_ut.cpp \
                 flexcounter_ut.cpp \
                 mock_orch_test.cpp \
                 $(top_srcdir)/warmrestart/warmRestartHelper.cpp \
