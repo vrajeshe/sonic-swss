@@ -86,10 +86,10 @@ namespace stporch_test
             vector<string> tableNames = {"STP_TABLE"};
             stpOrch = make_unique<StpOrch>(nullptr, nullptr, tableNames);
         }
-        void PreSetUp() override
+        void PostSetUp() override
         {
             mock_sai_stp = new MockSaiStp();
-    }
+        }
         void PreTearDown() override
         {
             delete mock_sai_stp;
