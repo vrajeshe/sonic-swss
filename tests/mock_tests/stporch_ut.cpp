@@ -13,7 +13,9 @@
 #include "mock_sai_api.h"
 #include "mock_orch_test.h"
 #include "mock_table.h"
+#define private public
 #include "stporch.h"
+#undef private
 #include "mock_sai_stp.h"
 
 
@@ -92,6 +94,7 @@ namespace stporch_test
         Port port;
         sai_uint16_t stp_instance = 1;
         sai_object_id_t stp_port_oid = 67890;
+        bool result;
 
         ASSERT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
 
@@ -106,17 +109,18 @@ namespace stporch_test
             create_stp_port(_, _, 2, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
 
-        bool result = stpOrch->updateStpPortState(port, stp_instance, STP_STATE_FORWARDING);
+        result = stpOrch->updateStpPortState(port, stp_instance, STP_STATE_FORWARDING);
 
         ASSERT_TRUE(result);
 
         EXPECT_CALL(*mock_sai_stp, 
             remove_stp_port(stp_port_oid)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
 
-        bool result = stpOrch->removeStpPort(port, stp_instance);
+        result = stpOrch->removeStpPort(port, stp_instance);
 
         ASSERT_TRUE(result);
     }
+}
 #if 0
     TEST_F(StpOrchTest, TestRemoveStpPort) {
         Port port;
