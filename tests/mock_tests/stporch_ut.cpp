@@ -108,14 +108,14 @@ namespace stporch_test
 
         bool result = stpOrch->updateStpPortState(port, stp_instance, STP_STATE_FORWARDING);
 
-        EXPECT_EQ(result);
+        ASSERT_TRUE(result);
 
         EXPECT_CALL(*mock_sai_stp, 
             remove_stp_port(stp_port_oid)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
 
         bool result = stpOrch->removeStpPort(port, stp_instance);
 
-        EXPECT_TRUE(result);
+        ASSERT_TRUE(result);
     }
 #if 0
     TEST_F(StpOrchTest, TestRemoveStpPort) {
