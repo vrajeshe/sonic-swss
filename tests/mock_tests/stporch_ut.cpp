@@ -28,6 +28,9 @@ namespace stporch_test
     using ::testing::_;
     using ::testing::Return;
 
+    // Global mock object for SAI STP
+    MockSaiStp* mock_sai_stp = nullptr;
+
     class StpOrchTest : public MockOrchTest {
     protected:
         unique_ptr<StpOrch> stpOrch;
@@ -83,9 +86,14 @@ namespace stporch_test
             vector<string> tableNames = {"STP_TABLE"};
             stpOrch = make_unique<StpOrch>(nullptr, nullptr, tableNames);
         }
-
+        void PreSetUp() override
+        {
+            mock_sai_stp = new MockSaiStp();
+    }
         void PreTearDown() override
         {
+            delete mock_sai_stp;
+            mock_sai_stp = nullptr;
             stpOrch.reset();
         }
     };
