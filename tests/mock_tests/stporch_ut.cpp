@@ -10,6 +10,7 @@
 #include "ut_helper.h"
 #include "dbconnector.h"
 #include "mock_orchagent_main.h"
+#include "mock_sai_api.h"
 #include "mock_orch_test.h"
 #include "mock_table.h"
 #include "stporch.h"
