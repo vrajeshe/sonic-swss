@@ -29,7 +29,6 @@ namespace stporch_test
     class StpOrchTest : public MockOrchTest {
     protected:
         unique_ptr<StpOrch> stpOrch;
-        unique_ptr<MockStpOrch> mockStpOrch;
 
         void ApplyInitialConfigs()
         {
@@ -83,15 +82,8 @@ namespace stporch_test
             stpOrch = make_unique<StpOrch>(nullptr, nullptr, tableNames);
         }
 
-        void PostSetUp() override
-        {
-            vector<TableConnector> tableConnectors = {{"STP_TABLE"}};
-            mockStpOrch = make_unique<MockStpOrch>(nullptr, tableConnectors);
-        }
-
         void PreTearDown() override
         {
-            mockStpOrch.reset();
             stpOrch.reset();
         }
     };
