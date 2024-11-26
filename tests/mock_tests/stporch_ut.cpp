@@ -101,19 +101,23 @@ namespace stporch_test
         sai_object_id_t stp_port_oid = 67890;
         bool result;
 
+        std::cout << "TestAddRemoveStpPort::1 " << std::endl;
         ASSERT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
 
+        std::cout << "TestAddRemoveStpPort::2 " << std::endl;
         EXPECT_CALL(*mock_sai_stp, 
             create_stp_port(_, _, 3, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
 
+        std::cout << "TestAddRemoveStpPort::3 " << std::endl;
         result = stpOrch->updateStpPortState(port, stp_instance, STP_STATE_FORWARDING);
 
         ASSERT_TRUE(result);
-
+        std::cout << "TestAddRemoveStpPort::4 " << std::endl;
         EXPECT_CALL(*mock_sai_stp, 
             remove_stp_port(stp_port_oid)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
 
+        std::cout << "TestAddRemoveStpPort::5 " << std::endl;
         result = stpOrch->removeStpPort(port, stp_instance);
 
         ASSERT_TRUE(result);
