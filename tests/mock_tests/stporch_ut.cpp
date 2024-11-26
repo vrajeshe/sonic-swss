@@ -14,13 +14,11 @@
 #include "mock_orch_test.h"
 #include "mock_table.h"
 #include "stporch.h"
-//#include "mock_sai_stp.h"
+#include "mock_sai_stp.h"
 
-EXTERN_MOCK_FNS
 
-namespace neighorch_test
+namespace stporch_test
 {
-    DEFINE_SAI_API_MOCK(neighbor);
     using namespace std;
     using namespace swss;
     using namespace mock_orch_test;
@@ -31,6 +29,7 @@ namespace neighorch_test
     class StpOrchTest : public MockOrchTest {
     protected:
         unique_ptr<StpOrch> stpOrch;
+        unique_ptr<MockStpOrch> mockStpOrch;
 
         void ApplyInitialConfigs()
         {
@@ -86,13 +85,13 @@ namespace neighorch_test
 
         void PostSetUp() override
         {
-            INIT_SAI_API_MOCK(stp);
-            MockSaiApis();
+            vector<TableConnector> tableConnectors = {{"STP_TABLE"}};
+            mockStpOrch = make_unique<MockStpOrch>(nullptr, tableConnectors);
         }
 
         void PreTearDown() override
         {
-            RestoreSaiApis();
+            mockStpOrch.reset();
             stpOrch.reset();
         }
     };
