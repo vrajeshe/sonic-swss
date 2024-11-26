@@ -106,14 +106,13 @@ namespace stporch_test
             create_stp_port(_, _, 2, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
 
-        bool result = stpOrch->updateStpPortState(stp_port_id, stp_instance, STP_STATE_FORWARDING);
+        bool result = stpOrch->updateStpPortState(stp_port_oid, stp_instance, STP_STATE_FORWARDING);
 
         EXPECT_TRUE(result);
     }
 
     TEST_F(StpOrchTest, TestRemoveStpPort) {
         Port port;
-        sai_object_id_t stp_port_oid;
         sai_uint16_t stp_instance = 1;
 
         ASSERT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
