@@ -88,7 +88,7 @@ namespace stporch_test
         }
     };
 
-    TEST_F(StpOrchTest, TestAddStpPort) {
+    TEST_F(StpOrchTest, TestAddRemoveStpPort) {
         Port port;
         sai_uint16_t stp_instance = 1;
         sai_object_id_t stp_port_oid = 67890;
@@ -106,11 +106,18 @@ namespace stporch_test
             create_stp_port(_, _, 2, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
 
-        bool result = stpOrch->updateStpPortState(stp_port_oid, stp_instance, STP_STATE_FORWARDING);
+        bool result = stpOrch->updateStpPortState(port, stp_instance, STP_STATE_FORWARDING);
+
+        EXPECT_EQ(result);
+
+        EXPECT_CALL(*mock_sai_stp, 
+            remove_stp_port(stp_port_oid)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
+
+        bool result = stpOrch->removeStpPort(port, stp_instance);
 
         EXPECT_TRUE(result);
     }
-
+#if 0
     TEST_F(StpOrchTest, TestRemoveStpPort) {
         Port port;
         sai_uint16_t stp_instance = 1;
@@ -124,7 +131,7 @@ namespace stporch_test
         EXPECT_TRUE(result);
     }
 }
-#if 0
+
 TEST_F(StpOrchTest, TestStpVlanFdbFlush) {
     string vlan_alias = "Vlan100";
 
