@@ -17,6 +17,9 @@
 using namespace std;
 using namespace swss;
 
+using ::testing::_;
+using ::testing::Return;
+
 // Global mock object for SAI STP
 MockSaiStp* mock_sai_stp = nullptr;
 
