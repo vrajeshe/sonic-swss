@@ -28,12 +28,10 @@ namespace stporch_test
     using ::testing::_;
     using ::testing::Return;
 
-    // Global mock object for SAI STP
-    MockSaiStp* mock_sai_stp = nullptr;
-
     class StpOrchTest : public MockOrchTest {
     protected:
         unique_ptr<StpOrch> stpOrch;
+        MockSaiStp* mock_sai_stp = nullptr;
 
         void ApplyInitialConfigs()
         {
@@ -81,20 +79,19 @@ namespace stporch_test
             gPortsOrch->addExistingData(&vlan_table);
             gPortsOrch->addExistingData(&vlan_member_table);
             static_cast<Orch *>(gPortsOrch)->doTask();
-
-            // Initialize StpOrch with mock dependencies
-            vector<string> tableNames = {"STP_TABLE"};
-            stpOrch = make_unique<StpOrch>(nullptr, nullptr, tableNames);
         }
         void PostSetUp() override
         {
+            // Initialize StpOrch with mock dependencies
+            vector<string> tableNames = {"STP_TABLE"};
+            stpOrch = make_unique<StpOrch>(nullptr, nullptr, tableNames);
+
             mock_sai_stp = new MockSaiStp();
         }
         void PreTearDown() override
         {
             delete mock_sai_stp;
             mock_sai_stp = nullptr;
-            stpOrch.reset();
         }
     };
 
@@ -107,7 +104,7 @@ namespace stporch_test
         ASSERT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
 
         EXPECT_CALL(*mock_sai_stp, 
-            create_stp_port(_, _, 2, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
+            create_stp_port(_, _, 3, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
 
         result = stpOrch->updateStpPortState(port, stp_instance, STP_STATE_FORWARDING);
