@@ -98,13 +98,6 @@ namespace stporch_test
 
         ASSERT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
 
-        sai_attribute_t attrs[2] = {};
-        attrs[0].id = SAI_STP_PORT_ATTR_BRIDGE_PORT;
-        attrs[0].value.oid = port.m_port_id;
-
-        attrs[1].id = SAI_STP_PORT_ATTR_STATE;
-        attrs[1].value.u32 = SAI_STP_PORT_STATE_FORWARDING;
-
         EXPECT_CALL(*mock_sai_stp, 
             create_stp_port(_, _, 2, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
