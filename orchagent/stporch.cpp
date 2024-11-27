@@ -65,9 +65,11 @@ sai_object_id_t StpOrch::addStpInstance(sai_uint16_t stp_instance)
     sai_status_t status = sai_stp_api->create_stp(&stp_oid, gSwitchId, 0, &attr);
     if (status != SAI_STATUS_SUCCESS)
     {
+         std::cout << "addStpInstance::1" << std::endl;
         SWSS_LOG_ERROR("Failed to create STP instance %u status %u", stp_instance, status);
         return SAI_NULL_OBJECT_ID;
     }
+    std::cout << "addStpInstance::2 " << std::endl;
     m_stpInstToOid[stp_instance] = stp_oid;
     SWSS_LOG_NOTICE("Added STP instance:%hu oid:%" PRIx64 "", stp_instance, stp_oid);
     return stp_oid;

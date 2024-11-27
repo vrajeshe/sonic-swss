@@ -107,6 +107,7 @@ namespace stporch_test
         Port port;
         sai_uint16_t stp_instance = 1;
         sai_object_id_t stp_port_oid = 67890;
+         sai_object_id_t stp_oid = 98765;
         bool result;
 
         std::cout << "TestAddRemoveStpPort::1 " << std::endl;
@@ -115,6 +116,10 @@ namespace stporch_test
         std::cout << "TestAddRemoveStpPort::2 " << std::endl;
         EXPECT_CALL(*mock_sai_stp, 
             create_stp_port(_, _, 3, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
+                                        ::testing::Return(SAI_STATUS_SUCCESS)));
+
+        EXPECT_CALL(*mock_sai_stp, 
+            create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
 
         port.m_bridge_port_id = 1234;
