@@ -132,6 +132,8 @@ namespace stporch_test
         EXPECT_CALL(*mock_sai_stp, 
             remove_stp_port(stp_port_oid)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
 
+        EXPECT_CALL(*mock_sai_stp, 
+            remove_stp(stp_oid)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         std::cout << "TestAddRemoveStpPort::5 " << std::endl;
         result = stpOrch->removeStpPort(port, stp_instance);
 
