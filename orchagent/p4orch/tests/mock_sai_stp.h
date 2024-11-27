@@ -2,8 +2,10 @@
 #define MOCK_SAI_STP_H
 
 #include <gmock/gmock.h>
+extern "C"
+{
 #include "sai.h"
-
+}
 // Mock class for SAI STP APIs
 class MockSaiStp {
 public:
@@ -55,14 +57,14 @@ public:
 extern MockSaiStp* mock_sai_stp;
 
 // Macros to redirect SAI calls to the mock object
-#define sai_create_stp mock_sai_stp->create_stp
-#define sai_remove_stp mock_sai_stp->remove_stp
-#define sai_set_stp_attribute mock_sai_stp->set_stp_attribute
-#define sai_get_stp_attribute mock_sai_stp->get_stp_attribute
-#define sai_create_stp_port mock_sai_stp->create_stp_port
-#define sai_remove_stp_port mock_sai_stp->remove_stp_port
-#define sai_set_stp_port_attribute mock_sai_stp->set_stp_port_attribute
-#define sai_get_stp_port_attribute mock_sai_stp->get_stp_port_attribute
+#define create_stp mock_sai_stp->create_stp
+#define remove_stp mock_sai_stp->remove_stp
+#define set_stp_attribute mock_sai_stp->set_stp_attribute
+#define get_stp_attribute mock_sai_stp->get_stp_attribute
+#define create_stp_port mock_sai_stp->create_stp_port
+#define remove_stp_port mock_sai_stp->remove_stp_port
+#define set_stp_port_attribute mock_sai_stp->set_stp_port_attribute
+#define get_stp_port_attribute mock_sai_stp->get_stp_port_attribute
 
 #endif // MOCK_SAI_STP_H
 
