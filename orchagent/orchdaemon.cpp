@@ -66,6 +66,7 @@ DebugCounterOrch *gDebugCounterOrch;
 MonitorOrch *gMonitorOrch;
 TunnelDecapOrch *gTunneldecapOrch;
 StpOrch *gStpOrch;
+MuxOrch *gMuxOrch;
 
 bool gIsNatSupported = false;
 event_handle_t g_events_handle;
@@ -399,8 +400,8 @@ bool OrchDaemon::init()
         CFG_MUX_CABLE_TABLE_NAME,
         CFG_PEER_SWITCH_TABLE_NAME
     };
-    MuxOrch *mux_orch = new MuxOrch(m_configDb, mux_tables, gTunneldecapOrch, gNeighOrch, gFdbOrch);
-    gDirectory.set(mux_orch);
+    gMuxOrch = new MuxOrch(m_configDb, mux_tables, gTunneldecapOrch, gNeighOrch, gFdbOrch);
+    gDirectory.set(gMuxOrch);
 
     MuxCableOrch *mux_cb_orch = new MuxCableOrch(m_applDb, m_stateDb, APP_MUX_CABLE_TABLE_NAME);
     gDirectory.set(mux_cb_orch);
@@ -943,6 +944,10 @@ bool OrchDaemon::warmRestoreAndSyncUp()
         o->bake();
     }
 
+    // let's cache the neighbor updates in mux orch and
+    // process them after everything being settled.
+    gMuxOrch->enableCachingNeighborUpdate();
+
     /*
      * Three iterations are needed.
      *
@@ -968,6 +973,9 @@ bool OrchDaemon::warmRestoreAndSyncUp()
             o->doTask();
         }
     }
+
+    gMuxOrch->updateCachedNeighbors();
+    gMuxOrch->disableCachingNeighborUpdate();
 
     // MirrorOrch depends on everything else being settled before it can run,
     // and mirror ACL rules depend on MirrorOrch, so run these two at the end
