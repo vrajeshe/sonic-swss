@@ -105,7 +105,7 @@ namespace stporch_test
         bool result;
 
         std::cout << "TestAddRemoveStpPort::1 " << std::endl;
-        ASSERT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
+        EXPECT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
 
         std::cout << "TestAddRemoveStpPort::2 " << std::endl;
         EXPECT_CALL(*mock_sai_stp, 
@@ -115,7 +115,7 @@ namespace stporch_test
         std::cout << "TestAddRemoveStpPort::3 " << std::endl;
         result = stpOrch->updateStpPortState(port, stp_instance, STP_STATE_FORWARDING);
 
-        ASSERT_TRUE(result);
+        EXPECT_TRUE(result);
         std::cout << "TestAddRemoveStpPort::4 " << std::endl;
         EXPECT_CALL(*mock_sai_stp, 
             remove_stp_port(stp_port_oid)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
@@ -123,7 +123,7 @@ namespace stporch_test
         std::cout << "TestAddRemoveStpPort::5 " << std::endl;
         result = stpOrch->removeStpPort(port, stp_instance);
 
-        ASSERT_TRUE(result);
+        EXPECT_TRUE(result);
     }
 }
 #if 0
