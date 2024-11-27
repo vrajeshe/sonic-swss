@@ -74,11 +74,13 @@ namespace stporch_test
                 VLAN_4000 + vlan_member_table.getTableNameSeparator() + ETHERNET12,
                 { { "tagging_mode", "untagged" } });
 
+            std::cout << "ApplyInitialConfigs " << std::endl;
 
             gPortsOrch->addExistingData(&port_table);
             gPortsOrch->addExistingData(&vlan_table);
             gPortsOrch->addExistingData(&vlan_member_table);
             static_cast<Orch *>(gPortsOrch)->doTask();
+            std::cout << "ApplyInitialConfigs 1 " << std::endl;
         }
         void PostSetUp() override
         {
@@ -87,6 +89,7 @@ namespace stporch_test
             stpOrch = make_unique<StpOrch>(nullptr, nullptr, tableNames);
 
             mock_sai_stp = new MockSaiStp();
+            std::cout << "PostSetUp " << std::endl;
         }
         void PreTearDown() override
         {
