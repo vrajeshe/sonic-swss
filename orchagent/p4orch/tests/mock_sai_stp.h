@@ -42,7 +42,7 @@ public:
                 sai_status_t(_In_ sai_object_id_t stp_port_id));
 
     // Mock method for setting STP port attributes
-    MOCK_METHOD2(sai_status_t, set_stp_port_attribute,
+    MOCK_METHOD2(set_stp_port_attribute,
                 sai_status_t(_Out_ sai_object_id_t stp_port_id, 
                              _In_ const sai_attribute_t *attr));
 
