@@ -200,27 +200,29 @@ sai_object_id_t StpOrch::addStpPort(Port &port, sai_uint16_t stp_instance)
 
         if(port.m_bridge_port_id == SAI_NULL_OBJECT_ID)
         {
-            std::cout << "addStpPort::2 " << std::endl;
+            std::cout << "addStpPort::3 " << std::endl;
             SWSS_LOG_ERROR("Failed to add STP port %s invalid bridge port id STP instance %d", port.m_alias.c_str(), stp_instance);
             return SAI_NULL_OBJECT_ID;
         }
     }
-
+    std::cout << "addStpPort::4 " << std::endl;
     attr[0].id = SAI_STP_PORT_ATTR_BRIDGE_PORT;
     attr[0].value.oid = port.m_bridge_port_id;
     
     stp_id = getStpInstanceOid(stp_instance);
     if(stp_id == SAI_NULL_OBJECT_ID)
     {
+        std::cout << "addStpPort::5 " << std::endl;
         stp_id = addStpInstance(stp_instance);
         if(stp_id == SAI_NULL_OBJECT_ID)
         {
-            std::cout << "addStpPort::3 " << std::endl;
+            std::cout << "addStpPort::6 " << std::endl;
             SWSS_LOG_ERROR("Failed to add STP instance %d for port %s", stp_instance, port.m_alias.c_str());
             return SAI_NULL_OBJECT_ID;
         }
     }
 
+    std::cout << "addStpPort::7 " << std::endl;
     attr[1].id = SAI_STP_PORT_ATTR_STP;
     attr[1].value.oid = stp_id;
     
@@ -230,13 +232,13 @@ sai_object_id_t StpOrch::addStpPort(Port &port, sai_uint16_t stp_instance)
     sai_status_t status = sai_stp_api->create_stp_port(&stp_port_id, gSwitchId, 3, attr);
     if (status != SAI_STATUS_SUCCESS)
     {
-        std::cout << "addStpPort::4 " << std::endl;
+        std::cout << "addStpPort::8 " << std::endl;
         SWSS_LOG_ERROR("Failed to add STP port %s instance %d status %u", port.m_alias.c_str(), stp_instance, status);
         return SAI_NULL_OBJECT_ID;
     }
 
     SWSS_LOG_NOTICE("Add STP port %s instance %d oid %" PRIx64 " size %zu", port.m_alias.c_str(), stp_instance, stp_port_id, port.m_stp_port_ids.size());
-    std::cout << "addStpPort::5 " << std::endl;
+    std::cout << "addStpPort::9 " << std::endl;
     port.m_stp_port_ids[stp_instance] = stp_port_id;
     gPortsOrch->setPort(port.m_alias, port);
     return stp_port_id;
