@@ -195,6 +195,7 @@ sai_object_id_t StpOrch::addStpPort(Port &port, sai_uint16_t stp_instance)
     std::cout << "addStpPort::1 " << std::endl;
     if(port.m_bridge_port_id == SAI_NULL_OBJECT_ID)
     {
+        std::cout << "addStpPort::2 " << std::endl;
         gPortsOrch->addBridgePort(port);
 
         if(port.m_bridge_port_id == SAI_NULL_OBJECT_ID)

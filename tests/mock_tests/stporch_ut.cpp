@@ -117,6 +117,8 @@ namespace stporch_test
             create_stp_port(_, _, 3, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
 
+        port.m_bridge_port_id = 1234;
+
         std::cout << "TestAddRemoveStpPort::3 " << std::endl;
         result = stpOrch->updateStpPortState(port, stp_instance, STP_STATE_FORWARDING);
 
