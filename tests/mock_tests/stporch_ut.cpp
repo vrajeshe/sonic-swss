@@ -122,6 +122,9 @@ namespace stporch_test
             create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
 
+        EXPECT_CALL(*mock_sai_stp, 
+            set_stp_port_attribute(_,_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
+
         port.m_bridge_port_id = 1234;
 
         std::cout << "TestAddRemoveStpPort::3 " << std::endl;

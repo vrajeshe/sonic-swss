@@ -62,10 +62,11 @@ sai_object_id_t StpOrch::addStpInstance(sai_uint16_t stp_instance)
     attr.id  = 0;
     attr.value.u32 = 0;
     
+    std::cout << "addStpInstance::start" << std::endl;
     sai_status_t status = sai_stp_api->create_stp(&stp_oid, gSwitchId, 0, &attr);
     if (status != SAI_STATUS_SUCCESS)
     {
-         std::cout << "addStpInstance::1" << std::endl;
+        std::cout << "addStpInstance::1" << std::endl;
         SWSS_LOG_ERROR("Failed to create STP instance %u status %u", stp_instance, status);
         return SAI_NULL_OBJECT_ID;
     }
@@ -337,19 +338,19 @@ bool StpOrch::updateStpPortState(Port &port, sai_uint16_t stp_instance, sai_uint
         SWSS_LOG_ERROR("Failed to get STP port oid port %s instance %d state %d ", port.m_alias.c_str(), stp_instance, stp_state);
         return true;
     }
-
+    std::cout << "updateStpPortState::2 " << std::endl;
     attr[0].id = SAI_STP_PORT_ATTR_STATE;
     attr[0].value.u32 = getStpSaiState(stp_state);
 
     sai_status_t status = sai_stp_api->set_stp_port_attribute(stp_port_oid, attr);
     if (status != SAI_STATUS_SUCCESS)
     {
-        std::cout << "updateStpPortState::2 " << std::endl;
+        std::cout << "updateStpPortState::3 " << std::endl;
         SWSS_LOG_ERROR("Failed to set STP port state %s instance %d state %d status %x", port.m_alias.c_str(), stp_instance, stp_state, status);
         return false;
     }
     
-    std::cout << "updateStpPortState::3 " << std::endl;
+    std::cout << "updateStpPortState::4 " << std::endl;
     SWSS_LOG_NOTICE("Set STP port state %s instance %d state %d ", port.m_alias.c_str(), stp_instance, stp_state);
 
     return true;

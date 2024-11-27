@@ -8,48 +8,47 @@
 class MockSaiStp {
 public:
     // Mock method for creating an STP instance
-    MOCK_METHOD(sai_status_t, create_stp,
-                (sai_object_id_t *stp_instance_id, 
-                 sai_object_id_t switch_id, 
-                 uint32_t attr_count, 
-                 const sai_attribute_t *attr_list));
+    MOCK_METHOD4(create_stp,
+                sai_status_t(_Out_ sai_object_id_t *stp_instance_id, 
+                             _In_ sai_object_id_t switch_id, 
+                             _In_ uint32_t attr_count, 
+                             _In_ const sai_attribute_t *attr_list));
 
     // Mock method for removing an STP instance
-    MOCK_METHOD(sai_status_t, remove_stp,
-                (sai_object_id_t stp_instance_id));
+    MOCK_METHOD1(remove_stp, sai_status_t(_In_ sai_object_id_t stp_instance_id));
 
     // Mock method for setting STP instance attributes
-    MOCK_METHOD(sai_status_t, set_stp_attribute,
-                (sai_object_id_t stp_instance_id, 
-                 const sai_attribute_t *attr));
+    MOCK_METHOD2(set_stp_attribute,
+                sai_status_t(_In_ sai_object_id_t stp_instance_id, 
+                             _In_ const sai_attribute_t *attr));
 
     // Mock method for getting STP instance attributes
-    MOCK_METHOD(sai_status_t, get_stp_attribute,
-                (sai_object_id_t stp_instance_id, 
-                 uint32_t attr_count, 
-                 sai_attribute_t *attr_list));
+    MOCK_METHOD3(get_stp_attribute,
+                sai_status_t(_Out_ sai_object_id_t stp_instance_id, 
+                             _In_ uint32_t attr_count, 
+                             _In_ sai_attribute_t *attr_list));
 
     // Mock method for creating an STP port
-    MOCK_METHOD(sai_status_t, create_stp_port,
-                (sai_object_id_t *stp_port_id, 
-                 sai_object_id_t switch_id, 
-                 uint32_t attr_count, 
-                 const sai_attribute_t *attr_list));
+    MOCK_METHOD4(create_stp_port,
+                sai_status_t(_Out_ sai_object_id_t *stp_port_id, 
+                             _In_ sai_object_id_t switch_id, 
+                             _In_ uint32_t attr_count, 
+                             _In_ const sai_attribute_t *attr_list));
 
     // Mock method for removing an STP port
-    MOCK_METHOD(sai_status_t, remove_stp_port,
-                (sai_object_id_t stp_port_id));
+    MOCK_METHOD1(remove_stp_port,
+                sai_status_t(_In_ sai_object_id_t stp_port_id));
 
     // Mock method for setting STP port attributes
-    MOCK_METHOD(sai_status_t, set_stp_port_attribute,
-                (sai_object_id_t stp_port_id, 
-                 const sai_attribute_t *attr));
+    MOCK_METHOD2(sai_status_t, set_stp_port_attribute,
+                sai_status_t(_Out_ sai_object_id_t stp_port_id, 
+                             _In_ const sai_attribute_t *attr));
 
     // Mock method for getting STP port attributes
-    MOCK_METHOD(sai_status_t, get_stp_port_attribute,
-                (sai_object_id_t stp_port_id, 
-                 uint32_t attr_count, 
-                 sai_attribute_t *attr_list));
+    MOCK_METHOD3(get_stp_port_attribute,
+                sai_status_t(_Out_ sai_object_id_t stp_port_id, 
+                             _In_ uint32_t attr_count, 
+                             _In_ sai_attribute_t *attr_list));
 };
 
 // Global mock object for SAI STP APIs
