@@ -84,12 +84,17 @@ namespace stporch_test
         }
         void PostSetUp() override
         {
+            std::cout << "PostSetUp start " << std::endl;
             // Initialize StpOrch with mock dependencies
-            vector<string> tableNames = {"STP_TABLE"};
-            stpOrch = make_unique<StpOrch>(nullptr, nullptr, tableNames);
+            vector<string> tableNames = 
+                {"STP_TABLE", 
+                "STP_VLAN_INSTANCE_TABLE",
+                "STP_PORT_STATE_TABLE",
+                "STP_FASTAGEING_FLUSH_TABLE"};
+            stpOrch = make_unique<StpOrch>(m_app_db.get(), m_state_db.get(), tableNames);
 
             mock_sai_stp = new MockSaiStp();
-            std::cout << "PostSetUp " << std::endl;
+            std::cout << "PostSetUp end" << std::endl;
         }
         void PreTearDown() override
         {
