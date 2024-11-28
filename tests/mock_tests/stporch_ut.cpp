@@ -119,15 +119,15 @@ namespace stporch_test
         EXPECT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
 
         std::cout << "TestAddRemoveStpPort::2 " << std::endl;
-        EXPECT_CALL(*mock_sai_stp, 
+        EXPECT_CALL(*mock_sai_stp_api, 
             create_stp_port(_, _, 3, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
 
-        EXPECT_CALL(*mock_sai_stp, 
+        EXPECT_CALL(*mock_sai_stp_api, 
             create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
 
-        EXPECT_CALL(*mock_sai_stp, 
+        EXPECT_CALL(*mock_sai_stp_api, 
             set_stp_port_attribute(_,_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
 
         port.m_bridge_port_id = 1234;
@@ -137,10 +137,10 @@ namespace stporch_test
 
         EXPECT_TRUE(result);
         std::cout << "TestAddRemoveStpPort::4 " << std::endl;
-        EXPECT_CALL(*mock_sai_stp, 
+        EXPECT_CALL(*mock_sai_stp_api, 
             remove_stp_port(stp_port_oid)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
 
-        EXPECT_CALL(*mock_sai_stp, 
+        EXPECT_CALL(*mock_sai_stp_api, 
             remove_stp(stp_oid)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         std::cout << "TestAddRemoveStpPort::5 " << std::endl;
         result = stpOrch->removeStpPort(port, stp_instance);
