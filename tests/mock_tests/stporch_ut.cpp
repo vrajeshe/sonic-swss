@@ -18,9 +18,11 @@
 #undef private
 #include "mock_sai_stp.h"
 
+EXTERN_MOCK_FNS
 
 namespace stporch_test
 {
+    DEFINE_SAI_API_MOCK(stp);
     using namespace std;
     using namespace swss;
     using namespace mock_orch_test;
@@ -93,13 +95,16 @@ namespace stporch_test
                 "STP_FASTAGEING_FLUSH_TABLE"};
             stpOrch = make_unique<StpOrch>(m_app_db.get(), m_state_db.get(), tableNames);
 
-            mock_sai_stp = new MockSaiStp();
+            //mock_sai_stp = new MockSaiStp();
             std::cout << "PostSetUp end" << std::endl;
+            INIT_SAI_API_MOCK(stp);
+            MockSaiApis();
         }
         void PreTearDown() override
         {
             delete mock_sai_stp;
             mock_sai_stp = nullptr;
+            RestoreSaiApis();
         }
     };
 
