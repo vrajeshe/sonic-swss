@@ -54,7 +54,7 @@ public:
 };
 
 // Global mock object for SAI STP APIs
-extern MockSaiStp *mock_sai_stp;
+MockSaiStp *mock_sai_stp;
 
 sai_status_t create_stp(_Out_ sai_object_id_t *stp_instance_id, 
                         _In_ sai_object_id_t switch_id, 
