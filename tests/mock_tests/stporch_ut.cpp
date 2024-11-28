@@ -24,6 +24,7 @@ namespace stporch_test
     using namespace std;
     using namespace swss;
     using namespace mock_orch_test;
+    using ::testing::StrictMock;
 
     using ::testing::_;
     using ::testing::Return;
@@ -99,7 +100,7 @@ namespace stporch_test
         void PreTearDown() override
         {
         }
-        
+
         sai_stp_api_t ut_sai_stp_api;
         sai_stp_api_t *org_sai_stp_api;
 
