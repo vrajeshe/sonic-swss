@@ -22,7 +22,7 @@ EXTERN_MOCK_FNS
 
 namespace stporch_test
 {
-    DEFINE_SAI_API_MOCK(stp);
+    DEFINE_SAI_GENERIC_API_MOCK(stp,stp);
     using namespace std;
     using namespace swss;
     using namespace mock_orch_test;
