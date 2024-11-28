@@ -29,6 +29,7 @@
 #include "nhgorch.h"
 #include "copporch.h"
 #include "twamporch.h"
+#include "stporch.h"
 #include "directory.h"
 
 extern int gBatchSize;
@@ -94,3 +95,4 @@ extern sai_tam_api_t* sai_tam_api;
 extern sai_dash_vip_api_t* sai_dash_vip_api;
 extern sai_dash_direction_lookup_api_t* sai_dash_direction_lookup_api;
 extern sai_dash_eni_api_t* sai_dash_eni_api;
+extern sai_stp_api_t* sai_stp_api;
