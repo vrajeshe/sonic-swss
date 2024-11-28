@@ -6,6 +6,7 @@ extern "C"
 {
 #include "sai.h"
 }
+    
 // Mock class for SAI STP APIs
 class MockSaiStp {
 public:

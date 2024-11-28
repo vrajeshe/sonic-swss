@@ -18,11 +18,9 @@
 #undef private
 #include "mock_sai_stp.h"
 
-EXTERN_MOCK_FNS
 
 namespace stporch_test
 {
-    DEFINE_SAI_GENERIC_API_MOCK(stp,stp);
     using namespace std;
     using namespace swss;
     using namespace mock_orch_test;
@@ -95,20 +93,41 @@ namespace stporch_test
                 "STP_FASTAGEING_FLUSH_TABLE"};
             stpOrch = make_unique<StpOrch>(m_app_db.get(), m_state_db.get(), tableNames);
 
-            //mock_sai_stp = new MockSaiStp();
             std::cout << "PostSetUp end" << std::endl;
-            INIT_SAI_API_MOCK(stp);
-            MockSaiApis();
+
         }
         void PreTearDown() override
         {
-            delete mock_sai_stp;
-            mock_sai_stp = nullptr;
-            RestoreSaiApis();
+            delete mock_sai_stp_api;
+            mock_sai_stp_api = nullptr;
+        }
+        sai_stp_api_t ut_sai_stp_api;
+        sai_stp_api_t *org_sai_stp_api;
+
+         void _hook_sai_stp_api()
+        {
+            ut_sai_stp_api = *sai_stp_api;
+            org_sai_stp_api = sai_stp_api;
+            sai_stp_api = &ut_sai_stp_api;
+        }
+
+        void _unhook_sai_stp_api()
+        {
+            sai_stp_api = org_sai_stp_api;
         }
     };
 
     TEST_F(StpOrchTest, TestAddRemoveStpPort) {
+        _hook_sai_stp_api();
+
+        StrictMock<MockSaiStp> mock_sai_stp_;
+        mock_sai_stp = &mock_sai_stp_;
+        sai_stp_api->create_stp = mock_create_stp;
+        sai_stp_api->remove_stp = mock_remove_stp;
+        sai_stp_api->create_stp_port = mock_create_stp_port;
+        sai_stp_api->remove_stp_port = mock_remove_stp_port;
+        sai_stp_api->set_stp_port_attribute = mock_set_stp_port_attribute;
+
         Port port;
         sai_uint16_t stp_instance = 1;
         sai_object_id_t stp_port_oid = 67890;
@@ -119,15 +138,15 @@ namespace stporch_test
         EXPECT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
 
         std::cout << "TestAddRemoveStpPort::2 " << std::endl;
-        EXPECT_CALL(*mock_sai_stp_api, 
+        EXPECT_CALL(mock_sai_stp_, 
             create_stp_port(_, _, 3, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
 
-        EXPECT_CALL(*mock_sai_stp_api, 
+        EXPECT_CALL(mock_sai_stp_, 
             create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
 
-        EXPECT_CALL(*mock_sai_stp_api, 
+        EXPECT_CALL(mock_sai_stp_, 
             set_stp_port_attribute(_,_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
 
         port.m_bridge_port_id = 1234;
@@ -137,15 +156,16 @@ namespace stporch_test
 
         EXPECT_TRUE(result);
         std::cout << "TestAddRemoveStpPort::4 " << std::endl;
-        EXPECT_CALL(*mock_sai_stp_api, 
+        EXPECT_CALL(mock_sai_stp_, 
             remove_stp_port(stp_port_oid)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
 
-        EXPECT_CALL(*mock_sai_stp_api, 
+        EXPECT_CALL(mock_sai_stp_, 
             remove_stp(stp_oid)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         std::cout << "TestAddRemoveStpPort::5 " << std::endl;
         result = stpOrch->removeStpPort(port, stp_instance);
 
         EXPECT_TRUE(result);
+        _unhook_sai_stp_api();
     }
 }
 #if 0
