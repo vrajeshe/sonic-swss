@@ -63,7 +63,7 @@ sai_object_id_t StpOrch::addStpInstance(sai_uint16_t stp_instance)
     attr.value.u32 = 0;
     
     std::cout << "addStpInstance::start" << std::endl;
-    sai_status_t status = sai_stp_api->create_stp(&stp_oid, gSwitchId, 0, &attr);
+    sai_status_t status = sai_stp_api->(&stp_oid, gSwitchId, 0, &attr);
     if (status != SAI_STATUS_SUCCESS)
     {
         std::cout << "addStpInstance::1" << std::endl;

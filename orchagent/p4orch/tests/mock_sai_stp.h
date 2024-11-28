@@ -47,9 +47,8 @@ public:
                              _In_ const sai_attribute_t *attr));
 
     // Mock method for getting STP port attributes
-    MOCK_METHOD3(get_stp_port_attribute,
+    MOCK_METHOD2(get_stp_port_attribute,
                 sai_status_t(_Out_ sai_object_id_t stp_port_id, 
-                             _In_ uint32_t attr_count, 
                              _In_ sai_attribute_t *attr_list));
 };
 
@@ -98,9 +97,9 @@ sai_status_t set_stp_port_attribute(_Out_ sai_object_id_t stp_port_id,
 }
 
 sai_status_t get_stp_port_attribute(_Out_ sai_object_id_t stp_port_id, 
-                             _In_ uint32_t attr_count, _In_ const sai_attribute_t *attr_list)            
+                            _In_ const sai_attribute_t *attr_list)            
 {
-    return mock_sai_stp->get_stp_port_attribute(stp_port_id, attr_count, attr_list);
+    return mock_sai_stp->get_stp_port_attribute(stp_port_id, attr_list);
 }
 
 #endif // MOCK_SAI_STP_H
