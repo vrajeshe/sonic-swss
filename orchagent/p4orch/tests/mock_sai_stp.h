@@ -83,7 +83,7 @@ sai_status_t create_stp_port(_Out_ sai_object_id_t *stp_port_id,
                              _In_ uint32_t attr_count, 
                              _In_ const sai_attribute_t *attr_list)
 {
-    return mock_sai_stp->reate_stp_port(stp_port_id, switch_id,attr_count, attr_list);
+    return mock_sai_stp->create_stp_port(stp_port_id, switch_id,attr_count, attr_list);
 }
 
 sai_status_t remove_stp_port(_In_ sai_object_id_t stp_port_id)
@@ -98,7 +98,7 @@ sai_status_t set_stp_port_attribute(_Out_ sai_object_id_t stp_port_id,
 }
 
 sai_status_t get_stp_port_attribute(_Out_ sai_object_id_t stp_port_id, 
-                             _In_ uint32_t attr_count, *attr_list);                 
+                             _In_ uint32_t attr_count, _In_ const sai_attribute_t *attr_list);                 
 {
     return mock_sai_stp->get_stp_port_attribute(stp_port_id, attr_count, attr_list);
 }

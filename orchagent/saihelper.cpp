@@ -277,6 +277,7 @@ void initSaiApi()
     sai_log_set(SAI_API_GENERIC_PROGRAMMABLE,   SAI_LOG_LEVEL_NOTICE);
     sai_log_set(SAI_API_TWAMP,                  SAI_LOG_LEVEL_NOTICE);
     sai_log_set(SAI_API_TAM,                    SAI_LOG_LEVEL_NOTICE);
+    sai_log_set(SAI_API_STP,                    SAI_LOG_LEVEL_NOTICE);
 }
 
 void initFlexCounterTables()
