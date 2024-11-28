@@ -112,7 +112,7 @@ namespace stporch_test
         Port port;
         sai_uint16_t stp_instance = 1;
         sai_object_id_t stp_port_oid = 67890;
-         sai_object_id_t stp_oid = 98765;
+        sai_object_id_t stp_oid = 98765;
         bool result;
 
         std::cout << "TestAddRemoveStpPort::1 " << std::endl;

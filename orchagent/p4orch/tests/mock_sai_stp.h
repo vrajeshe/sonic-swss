@@ -49,7 +49,8 @@ public:
     // Mock method for getting STP port attributes
     MOCK_METHOD2(get_stp_port_attribute,
                 sai_status_t(_Out_ sai_object_id_t stp_port_id, 
-                             _In_ sai_attribute_t *attr_list));
+                            _In_ uint32_t attr_count,
+                            _In_ sai_attribute_t *attr_list));
 };
 
 // Global mock object for SAI STP APIs
