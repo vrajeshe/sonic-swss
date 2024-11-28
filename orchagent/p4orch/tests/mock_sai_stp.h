@@ -55,7 +55,8 @@ public:
 // Global mock object for SAI STP APIs
 extern MockSaiStp *mock_sai_stp;
 
-sai_status_t create_stp(_Out_ sai_object_id_t *stp_instance_id, _In_ sai_object_id_t switch_id, 
+sai_status_t create_stp(_Out_ sai_object_id_t *stp_instance_id, 
+                        _In_ sai_object_id_t switch_id, 
                         _In_ uint32_t attr_count, 
                         _In_ const sai_attribute_t *attr_list)
 {
@@ -73,7 +74,7 @@ sai_status_t set_stp_attribute(_In_ sai_object_id_t stp_instance_id, _In_ const 
 }
 
 sai_status_t get_stp_attribute(_Out_ sai_object_id_t stp_instance_id, 
-                            _In_ uint32_t attr_count, _In_ sai_attribute_t *attr_list)
+                            _In_ uint32_t attr_count, _Inout_ sai_attribute_t *attr_list)
 {
     return mock_sai_stp->get_stp_attribute(stp_instance_id, attr_count, attr_list);
 }
@@ -90,16 +91,17 @@ sai_status_t remove_stp_port(_In_ sai_object_id_t stp_port_id)
     return mock_sai_stp->remove_stp_port(stp_port_id);
 }
 
-sai_status_t set_stp_port_attribute(_Out_ sai_object_id_t stp_port_id, 
+sai_status_t set_stp_port_attribute(_In_ sai_object_id_t stp_port_id, 
                              _In_ const sai_attribute_t *attr)
 {
     return mock_sai_stp->set_stp_port_attribute(stp_port_id, attr);
 }
 
 sai_status_t get_stp_port_attribute(_Out_ sai_object_id_t stp_port_id, 
-                            _In_ const sai_attribute_t *attr_list)            
+                                    _In_ uint32_t attr_count,
+                                    _Inout_ sai_attribute_t *attr_list)            
 {
-    return mock_sai_stp->get_stp_port_attribute(stp_port_id, attr_list);
+    return mock_sai_stp->get_stp_port_attribute(stp_port_id, attr_count, attr_list);
 }
 
 #endif // MOCK_SAI_STP_H
