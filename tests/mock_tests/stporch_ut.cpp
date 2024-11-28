@@ -98,9 +98,8 @@ namespace stporch_test
         }
         void PreTearDown() override
         {
-            delete mock_sai_stp_api;
-            mock_sai_stp_api = nullptr;
         }
+        
         sai_stp_api_t ut_sai_stp_api;
         sai_stp_api_t *org_sai_stp_api;
 
