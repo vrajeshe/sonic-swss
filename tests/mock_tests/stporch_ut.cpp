@@ -121,14 +121,14 @@ namespace stporch_test
             return SAI_STATUS_SUCCESS;
         }
 
-        sai_stp_vlan_t ut_sai_vlan_api;
-        sai_stp_vlan_t *org_sai_vlan_api;
+        sai_vlan_api_t ut_sai_vlan_api;
+        sai_vlan_api_t *org_sai_vlan_api;
 
         void _hook_sai_vlan_api()
         {
             ut_sai_vlan_api = *sai_vlan_api;
             org_sai_vlan_api = sai_vlan_api;
-            ut_sai_vlam_api.set_vlan_attribute = _ut_stub_sai_set_vlan_attribute;
+            ut_sai_vlan_api.set_vlan_attribute = _ut_stub_sai_set_vlan_attribute;
             sai_vlan_api = &ut_sai_vlan_api;
         }
 
