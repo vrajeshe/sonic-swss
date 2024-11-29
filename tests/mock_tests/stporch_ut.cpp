@@ -103,7 +103,7 @@ namespace stporch_test
         sai_stp_api_t ut_sai_stp_api;
         sai_stp_api_t *org_sai_stp_api;
 
-         void _hook_sai_stp_api()
+        void _hook_sai_stp_api()
         {
             ut_sai_stp_api = *sai_stp_api;
             org_sai_stp_api = sai_stp_api;
@@ -114,10 +114,30 @@ namespace stporch_test
         {
             sai_stp_api = org_sai_stp_api;
         }
+
+        sai_status_t _ut_stub_sai_set_vlan_attribute(_In_ sai_object_id_t vlan_oid,
+                    _In_ const sai_attribute_t *attr)
+        {
+            return SAI_STATUS_SUCCESS;
+        }
+
+        void _hook_sai_vlan_api()
+        {
+            ut_sai_vlan_api = *sai_vlan_api;
+            org_sai_vlan_api = sai_vlan_api;
+            ut_sai_vlam_api.set_vlan_attribute = _ut_stub_sai_set_vlan_attribute;
+            sai_vlan_api = &ut_sai_vlan_api;
+        }
+
+        void _unhook_sai_vlan_api()
+        {
+            sai_vlan_api = org_sai_vlan_api;
+        }
     };
 
     TEST_F(StpOrchTest, TestAddRemoveStpPort) {
         _hook_sai_stp_api();
+        _hook_sai_vlan_api();
 
         StrictMock<MockSaiStp> mock_sai_stp_;
         mock_sai_stp = &mock_sai_stp_;
@@ -138,33 +158,44 @@ namespace stporch_test
 
         std::cout << "TestAddRemoveStpPort::2 " << std::endl;
         EXPECT_CALL(mock_sai_stp_, 
+            create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
+                                        ::testing::Return(SAI_STATUS_SUCCESS)));
+        result = stpOrch->addVlanToStpInstance(VLAN_1000, stp_instance);
+        EXPECT_TRUE(result);
+
+        std::cout << "TestAddRemoveStpPort::3 " << std::endl;
+        EXPECT_CALL(mock_sai_stp_, 
             create_stp_port(_, _, 3, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
-
         EXPECT_CALL(mock_sai_stp_, 
             create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
-
         EXPECT_CALL(mock_sai_stp_, 
             set_stp_port_attribute(_,_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
 
         port.m_bridge_port_id = 1234;
 
-        std::cout << "TestAddRemoveStpPort::3 " << std::endl;
+        std::cout << "TestAddRemoveStpPort::4 " << std::endl;
         result = stpOrch->updateStpPortState(port, stp_instance, STP_STATE_FORWARDING);
 
         EXPECT_TRUE(result);
-        std::cout << "TestAddRemoveStpPort::4 " << std::endl;
+        std::cout << "TestAddRemoveStpPort::5 " << std::endl;
         EXPECT_CALL(mock_sai_stp_, 
             remove_stp_port(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
 
+        std::cout << "TestAddRemoveStpPort::6 " << std::endl;
+        result = stpOrch->removeStpPort(port, stp_instance);
+        EXPECT_TRUE(result);
+
+        std::cout << "TestAddRemoveStpPort::7 " << std::endl;
         EXPECT_CALL(mock_sai_stp_, 
             remove_stp(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
-        std::cout << "TestAddRemoveStpPort::5 " << std::endl;
-        result = stpOrch->removeStpPort(port, stp_instance);
-
+        result = stpOrch->removeVlanFromStpInstance(stp_instance);
         EXPECT_TRUE(result);
+
+        std::cout << "TestAddRemoveStpPort::8 " << std::endl;
         _unhook_sai_stp_api();
+        _uhook_sai_vlan_api();
     }
 }
 #if 0
