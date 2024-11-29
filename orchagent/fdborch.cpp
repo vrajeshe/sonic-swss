@@ -1141,7 +1141,7 @@ void FdbOrch::flushFDBEntries(sai_object_id_t bridge_port_oid,
 void FdbOrch::flushFdbByVlan(const string &alias, bool flush_static)
 {
     sai_status_t status;
-    Port vlan;
+    swss::Port vlan;
     sai_attribute_t vlan_attr[2];
 
     if (!m_portsOrch->getPort(alias, vlan))
@@ -1149,7 +1149,7 @@ void FdbOrch::flushFdbByVlan(const string &alias, bool flush_static)
         SWSS_LOG_NOTICE("could not locate vlan from alias %s", alias.c_str());
         return;
     }
-    SWSS_LOG_NOTICE("Start: Flush by vlan %s vlan_oid 0x%lx flush_static %d",
+    SWSS_LOG_NOTICE("Start: Flush by vlan %s vlan_oid 0x%" PRIx64 " flush_static %d",
             alias.c_str(), vlan.m_vlan_info.vlan_oid, flush_static);
 
     vlan_attr[0].id = SAI_FDB_FLUSH_ATTR_BV_ID;
@@ -1170,7 +1170,7 @@ void FdbOrch::flushFdbByVlan(const string &alias, bool flush_static)
     }
     else
     {
-        SWSS_LOG_NOTICE("End: Flush by vlan %s vlan_oid 0x%lx flush_static %d",
+        SWSS_LOG_NOTICE("End: Flush by vlan %s vlan_oid 0x%" PRIx64 " flush_static %d",
                     alias.c_str(), vlan.m_vlan_info.vlan_oid, flush_static);
     }
 
