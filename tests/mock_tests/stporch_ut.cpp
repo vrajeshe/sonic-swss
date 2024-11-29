@@ -29,6 +29,12 @@ namespace stporch_test
     using ::testing::_;
     using ::testing::Return;
 
+    sai_status_t _ut_stub_sai_set_vlan_attribute(_In_ sai_object_id_t vlan_oid,
+                    _In_ const sai_attribute_t *attr)
+    {
+        return SAI_STATUS_SUCCESS;
+    }
+
     class StpOrchTest : public MockOrchTest {
     protected:
         unique_ptr<StpOrch> stpOrch;
@@ -113,12 +119,6 @@ namespace stporch_test
         void _unhook_sai_stp_api()
         {
             sai_stp_api = org_sai_stp_api;
-        }
-
-        sai_status_t _ut_stub_sai_set_vlan_attribute(_In_ sai_object_id_t vlan_oid,
-                    _In_ const sai_attribute_t *attr)
-        {
-            return SAI_STATUS_SUCCESS;
         }
 
         sai_vlan_api_t ut_sai_vlan_api;
