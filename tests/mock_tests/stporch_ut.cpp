@@ -32,7 +32,6 @@ namespace stporch_test
     class StpOrchTest : public MockOrchTest {
     protected:
         unique_ptr<StpOrch> stpOrch;
-        MockSaiStp* mock_sai_stp = nullptr;
 
         void ApplyInitialConfigs()
         {
