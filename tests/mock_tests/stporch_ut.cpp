@@ -80,18 +80,14 @@ namespace stporch_test
                 VLAN_4000 + vlan_member_table.getTableNameSeparator() + ETHERNET12,
                 { { "tagging_mode", "untagged" } });
 
-            std::cout << "ApplyInitialConfigs " << std::endl;
 
             gPortsOrch->addExistingData(&port_table);
             gPortsOrch->addExistingData(&vlan_table);
             gPortsOrch->addExistingData(&vlan_member_table);
             static_cast<Orch *>(gPortsOrch)->doTask();
-            std::cout << "ApplyInitialConfigs 1 " << std::endl;
         }
         void PostSetUp() override
         {
-            std::cout << "PostSetUp start " << std::endl;
-            // Initialize StpOrch with mock dependencies
             vector<string> tableNames = 
                 {"STP_TABLE", 
                 "STP_VLAN_INSTANCE_TABLE",
@@ -99,11 +95,10 @@ namespace stporch_test
                 "STP_FASTAGEING_FLUSH_TABLE"};
             stpOrch = make_unique<StpOrch>(m_app_db.get(), m_state_db.get(), tableNames);
 
-            std::cout << "PostSetUp end" << std::endl;
-
         }
         void PreTearDown() override
         {
+            stpOrch.reset();
         }
 
         sai_stp_api_t ut_sai_stp_api;
@@ -170,7 +165,10 @@ namespace stporch_test
         EXPECT_CALL(mock_sai_stp_, 
             create_stp_port(_, _, 3, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
+        EXPECT_CALL(mock_sai_stp_, 
+            set_stp_port_attribute(_,_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         port.m_bridge_port_id = 1234;
+        
         std::cout << "TestAddRemoveStpPort::4 " << std::endl;
         result = stpOrch->updateStpPortState(port, stp_instance, STP_STATE_FORWARDING);
         ASSERT_TRUE(result);
