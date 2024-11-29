@@ -55,31 +55,9 @@ namespace stporch_test
             vlan_table.set(VLAN_1000, { { "admin_status", "up" },
                                         { "mtu", "9100" },
                                         { "mac", "00:aa:bb:cc:dd:ee" } });
-            vlan_table.set(VLAN_2000, { { "admin_status", "up" },
-                                        { "mtu", "9100" },
-                                        { "mac", "aa:11:bb:22:cc:33" } });
-            vlan_table.set(VLAN_3000, { { "admin_status", "up" },
-                                        { "mtu", "9100" },
-                                        { "mac", "99:ff:88:ee:77:dd" } });
-            vlan_table.set(VLAN_4000, { { "admin_status", "up" },
-                                        { "mtu", "9100" },
-                                        { "mac", "99:ff:88:ee:77:dd" } });
             vlan_member_table.set(
                 VLAN_1000 + vlan_member_table.getTableNameSeparator() + ETHERNET0,
                 { { "tagging_mode", "untagged" } });
-
-            vlan_member_table.set(
-                VLAN_2000 + vlan_member_table.getTableNameSeparator() + ETHERNET4,
-                { { "tagging_mode", "untagged" } });
-
-            vlan_member_table.set(
-                VLAN_3000 + vlan_member_table.getTableNameSeparator() + ETHERNET8,
-                { { "tagging_mode", "untagged" } });
-
-            vlan_member_table.set(
-                VLAN_4000 + vlan_member_table.getTableNameSeparator() + ETHERNET12,
-                { { "tagging_mode", "untagged" } });
-
 
             gPortsOrch->addExistingData(&port_table);
             gPortsOrch->addExistingData(&vlan_table);
@@ -151,41 +129,33 @@ namespace stporch_test
         sai_object_id_t stp_oid = 98765;
         bool result;
 
-        std::cout << "TestAddRemoveStpPort::1 " << std::endl;
         ASSERT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
 
-        std::cout << "TestAddRemoveStpPort::2 " << std::endl;
         EXPECT_CALL(mock_sai_stp_, 
             create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
         result = stpOrch->addVlanToStpInstance(VLAN_1000, stp_instance);
         ASSERT_TRUE(result);
 
-        std::cout << "TestAddRemoveStpPort::3 " << std::endl;
         EXPECT_CALL(mock_sai_stp_, 
             create_stp_port(_, _, 3, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
         EXPECT_CALL(mock_sai_stp_, 
             set_stp_port_attribute(_,_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         port.m_bridge_port_id = 1234;
-        
-        std::cout << "TestAddRemoveStpPort::4 " << std::endl;
         result = stpOrch->updateStpPortState(port, stp_instance, STP_STATE_FORWARDING);
         ASSERT_TRUE(result);
 
-        std::cout << "TestAddRemoveStpPort::5 " << std::endl;
         EXPECT_CALL(mock_sai_stp_, 
             remove_stp_port(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         result = stpOrch->removeStpPort(port, stp_instance);
         ASSERT_TRUE(result);
 
-        std::cout << "TestAddRemoveStpPort::7 " << std::endl;
         EXPECT_CALL(mock_sai_stp_, 
             remove_stp(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         result = stpOrch->removeVlanFromStpInstance(VLAN_1000, stp_instance);
         ASSERT_TRUE(result);
 
-        std::cout << "TestAddRemoveStpPort::8 " << std::endl;
         _unhook_sai_stp_api();
         _unhook_sai_vlan_api();
     }
