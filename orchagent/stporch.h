@@ -26,7 +26,6 @@ public:
     bool updateMaxStpInstance(uint32_t max_stp_instance);
     bool removeStpPorts(Port &port);
     bool removeVlanFromStpInstance(string vlan, sai_uint16_t stp_instance);
-    bool stpVlanPortFdbFlush(string port_alias, string vlan_alias);
 
 private:
     unique_ptr<Table> m_stpTable;

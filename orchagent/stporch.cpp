@@ -8,8 +8,8 @@ extern sai_stp_api_t *sai_stp_api;
 extern sai_vlan_api_t *sai_vlan_api;
 extern sai_switch_api_t *sai_switch_api;
 
-extern FdbOrch *gFdbOrch;
-extern PortsOrch*        gPortsOrch;
+extern FdbOrch   *gFdbOrch;
+extern PortsOrch *gPortsOrch;
 
 extern sai_object_id_t gSwitchId;
 
@@ -368,7 +368,7 @@ bool StpOrch::stpVlanFdbFlush(string vlan_alias)
         return false;
     }
 
-    //gFdbOrch->flushFdbByVlan(vlan_alias, 0);
+    gFdbOrch->flushFdbByVlan(vlan_alias, 0);
     
     SWSS_LOG_NOTICE("Set STP FDB flush vlan %s ", vlan_alias.c_str());
     return true;

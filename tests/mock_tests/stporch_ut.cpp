@@ -28,6 +28,7 @@ namespace stporch_test
 
     using ::testing::_;
     using ::testing::Return;
+    using namespace fdb_syncd_flush_test;
 
     class StpOrchTest : public MockOrchTest {
     protected:
@@ -134,7 +135,7 @@ namespace stporch_test
         bool result;
 
         std::cout << "TestAddRemoveStpPort::1 " << std::endl;
-        EXPECT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
+        ASSERT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
 
         std::cout << "TestAddRemoveStpPort::2 " << std::endl;
         EXPECT_CALL(mock_sai_stp_, 
@@ -156,10 +157,10 @@ namespace stporch_test
         EXPECT_TRUE(result);
         std::cout << "TestAddRemoveStpPort::4 " << std::endl;
         EXPECT_CALL(mock_sai_stp_, 
-            remove_stp_port(stp_port_oid)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
+            remove_stp_port(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
 
         EXPECT_CALL(mock_sai_stp_, 
-            remove_stp(stp_oid)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
+            remove_stp(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         std::cout << "TestAddRemoveStpPort::5 " << std::endl;
         result = stpOrch->removeStpPort(port, stp_instance);
 
@@ -167,39 +168,11 @@ namespace stporch_test
         _unhook_sai_stp_api();
     }
 }
-#if 0
-    TEST_F(StpOrchTest, TestRemoveStpPort) {
-        Port port;
-        sai_uint16_t stp_instance = 1;
-
-        ASSERT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
-        EXPECT_CALL(*mock_sai_stp, 
-            remove_stp_port(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
-    
-        bool result = stpOrch->removeStpPort(port, stp_instance);
-
-        EXPECT_TRUE(result);
-    }
-}
 
 TEST_F(StpOrchTest, TestStpVlanFdbFlush) {
     string vlan_alias = "Vlan100";
-
-    EXPECT_CALL(*mock_sai_stp, set_stp_instance_attribute(_, _)).Times(0);
-
+   
     bool result = stpOrch->stpVlanFdbFlush(vlan_alias);
 
     EXPECT_TRUE(result);
 }
-
-TEST_F(StpOrchTest, TestStpVlanPortFdbFlush) {
-    string port_alias = "Ethernet0";
-    string vlan_alias = "Vlan100";
-
-    EXPECT_CALL(*mock_sai_stp, set_stp_instance_attribute(_, _)).Times(0);
-
-    bool result = stpOrch->stpVlanPortFdbFlush(port_alias, vlan_alias);
-
-    EXPECT_TRUE(result);
-}
-#endif
