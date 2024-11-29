@@ -121,6 +121,9 @@ namespace stporch_test
             return SAI_STATUS_SUCCESS;
         }
 
+        sai_stp_vlan_t ut_sai_vlan_api;
+        sai_stp_vlan_t *org_sai_vlan_api;
+
         void _hook_sai_vlan_api()
         {
             ut_sai_vlan_api = *sai_vlan_api;
@@ -190,12 +193,12 @@ namespace stporch_test
         std::cout << "TestAddRemoveStpPort::7 " << std::endl;
         EXPECT_CALL(mock_sai_stp_, 
             remove_stp(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
-        result = stpOrch->removeVlanFromStpInstance(stp_instance);
+        result = stpOrch->removeVlanFromStpInstance(VLAN_1000, stp_instance);
         EXPECT_TRUE(result);
 
         std::cout << "TestAddRemoveStpPort::8 " << std::endl;
         _unhook_sai_stp_api();
-        _uhook_sai_vlan_api();
+        _unhook_sai_vlan_api();
     }
 }
 #if 0
