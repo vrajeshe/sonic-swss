@@ -160,12 +160,3 @@ namespace stporch_test
         _unhook_sai_vlan_api();
     }
 }
-#if 0
-TEST_F(StpOrchTest, TestStpVlanFdbFlush) {
-    string vlan_alias = "Vlan100";
-   
-    bool result = stpOrch->stpVlanFdbFlush(vlan_alias);
-
-    EXPECT_TRUE(result);
-}
-#endif
