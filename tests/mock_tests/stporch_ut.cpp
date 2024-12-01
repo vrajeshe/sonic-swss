@@ -36,7 +36,7 @@ namespace stporch_test
     }
 
     sai_status_t _ut_stub_sai_flush_fdb_entries(_In_ sai_object_id_t switch_id,
-                    _In_ uint32_t attr_count, _In_ const sai_attribute_t *attr_list);
+                    _In_ uint32_t attr_count, _In_ const sai_attribute_t *attr_list)
     {
         return SAI_STATUS_SUCCESS;
     }
