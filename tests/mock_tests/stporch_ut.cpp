@@ -69,6 +69,7 @@ namespace stporch_test
             gPortsOrch->addExistingData(&vlan_table);
             gPortsOrch->addExistingData(&vlan_member_table);
             static_cast<Orch *>(gPortsOrch)->doTask();
+            std::cout << " init done " << std::endl;
         }
         void PostSetUp() override
         {
@@ -78,7 +79,7 @@ namespace stporch_test
                 "STP_PORT_STATE_TABLE",
                 "STP_FASTAGEING_FLUSH_TABLE"};
             stpOrch = make_unique<StpOrch>(m_app_db.get(), m_state_db.get(), tableNames);
-
+            std::cout << " stporch " << std::endl;
         }
         void PreTearDown() override
         {
@@ -137,6 +138,7 @@ namespace stporch_test
         _hook_sai_vlan_api();
         _hook_sai_fdb_api();
 
+        std::cout << " 1 " << std::endl;
         StrictMock<MockSaiStp> mock_sai_stp_;
         mock_sai_stp = &mock_sai_stp_;
         sai_stp_api->create_stp = mock_create_stp;
@@ -153,6 +155,7 @@ namespace stporch_test
 
         ASSERT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
 
+        std::cout << " 2 " << std::endl;
         EXPECT_CALL(mock_sai_stp_, 
             create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
@@ -171,6 +174,7 @@ namespace stporch_test
         result = stpOrch->stpVlanFdbFlush(VLAN_1000);
         ASSERT_TRUE(result);
 
+        std::cout << " 3 " << std::endl;
         EXPECT_CALL(mock_sai_stp_, 
             remove_stp_port(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         result = stpOrch->removeStpPort(port, stp_instance);
@@ -181,8 +185,6 @@ namespace stporch_test
         result = stpOrch->removeVlanFromStpInstance(VLAN_1000, stp_instance);
         ASSERT_TRUE(result);
 
-
-        ASSERT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
         EXPECT_CALL(mock_sai_stp_, 
             create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
@@ -195,11 +197,13 @@ namespace stporch_test
         result = stpOrch->updateStpPortState(port, stp_instance, STP_STATE_BLOCKING);
         ASSERT_TRUE(result);
 
+        std::cout << " 4 " << std::endl;
         EXPECT_CALL(mock_sai_stp_, 
             remove_stp_port(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         result = stpOrch->removeStpPorts(port);
         ASSERT_TRUE(result);
 
+        std::cout << " 5 " << std::endl;
         _unhook_sai_stp_api();
         _unhook_sai_vlan_api();
         _unhook_sai_fdb_api();
