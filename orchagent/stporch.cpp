@@ -371,15 +371,13 @@ void StpOrch::doStpTask(Consumer &consumer)
 
         if (op == SET_COMMAND)
         {
-            string stp_instance;
             uint16_t instance = STP_INVALID_INSTANCE;
 
             for (auto i : kfvFieldsValues(t))
             {
                 if (fvField(i) == "stp_instance")
                 {
-                    stp_instance = fvValue(i);
-                    instance = (uint16_t)std::stoi(stp_instance);
+                    instance = (uint16_t)std::stoi(fvValue(i));
                 }
             }
 
@@ -443,15 +441,13 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
 
         if (op == SET_COMMAND)
         {
-            string stp_state;
             uint8_t state = STP_STATE_INVALID;
 
             for (auto i : kfvFieldsValues(t))
             {
                 if (fvField(i) == "state")
                 {
-                    stp_state = fvValue(i);
-                    state = (uint8_t)std::stoi(stp_state);
+                    state = (uint8_t)std::stoi(fvValue(i));
                 }
             }
 
@@ -476,10 +472,6 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
                 continue;
             }
         }
-        else
-        {
-            SWSS_LOG_ERROR("Unknown operation type %s", op.c_str());
-        }
         it = consumer.m_toSync.erase(it);
     }
 }
@@ -488,37 +480,20 @@ void StpOrch::doStpFastageTask(Consumer &consumer)
 {
     SWSS_LOG_ENTER();
 
-    auto it = consumer.m_toSync.begin();
-    while (it != consumer.m_toSync.end())
+    for (auto it = consumer.m_toSync.begin(); it != consumer.m_toSync.end(); )
     {
         auto &t = it->second;
-
-        string vlan_alias = kfvKey(t);
-
         string op = kfvOp(t);
 
-        if (op == SET_COMMAND)
+        if (op == SET_COMMAND && fvValue(find_if(kfvFieldsValues(t), [](auto &fv){ return fvField(fv) == "state"; })) == "true")
         {
-            string state;
-            for (auto i : kfvFieldsValues(t))
-            {
-                if (fvField(i) == "state")
-                    state = fvValue(i);
-            }
-
-            if(state.compare("true") == 0)
-            {
-                stpVlanFdbFlush(vlan_alias);
-            }
+            stpVlanFdbFlush(kfvKey(t));
         }
-        else if (op == DEL_COMMAND)
-        {
-            //no op
-        }
-        else
+        else if (op != DEL_COMMAND)
         {
             SWSS_LOG_ERROR("Unknown operation type %s", op.c_str());
         }
+
         it = consumer.m_toSync.erase(it);
     }
 }

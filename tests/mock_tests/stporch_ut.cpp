@@ -196,7 +196,50 @@ namespace stporch_test
             remove_stp_port(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         result = stpOrch->removeStpPorts(port);
         ASSERT_TRUE(result);
+  
+        std::cout << "Main test done" << std::endl;
 
+        std::deque<KeyOpFieldsValuesTuple> entries;
+        entries.push_back({"STP_VLAN_INSTANCE_TABLE:Vlan1000", "SET", { {"stp_instance", "1"}}})
+        EXPECT_CALL(mock_sai_stp_, 
+            create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
+                                        ::testing::Return(SAI_STATUS_SUCCESS)));
+        auto consumer = dynamic_cast<Consumer *>((this->stpOrch.get())->getExecutor("APP_STP_VLAN_INSTANCE_TABLE_NAME"));
+        consumer->addToSync(entries);
+        static_cast<Orch *>(this->stpOrch.get())->doTask(*consumer); 
+
+        std::cout << "1 done" << std::endl;
+        entries.clear();
+        EXPECT_CALL(mock_sai_stp_, 
+            create_stp_port(_, _, 3, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
+                                        ::testing::Return(SAI_STATUS_SUCCESS)));
+        EXPECT_CALL(mock_sai_stp_, 
+            set_stp_port_attribute(_,_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
+        port.m_bridge_port_id = 1234; 
+        entries.push_back({"STP_PORT_STATE_TABLE:Ethernet0:1", "SET", { {"state", "4"}}})
+        consumer = dynamic_cast<Consumer *>((this->stpOrch.get())->getExecutor("APP_STP_PORT_STATE_TABLE_NAME"));
+        consumer->addToSync(entries);
+        static_cast<Orch *>(this->stpOrch.get())->doTask(*consumer); 
+        
+        std::cout << "2 done" << std::endl;
+        entries.clear();
+        entries.push_back({"STP_PORT_STATE_TABLE:Ethernet0:1", "DEL", { {} }});
+        EXPECT_CALL(mock_sai_stp_, 
+            remove_stp_port(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
+        consumer = dynamic_cast<Consumer *>((this->stpOrch.get())->getExecutor("APP_STP_PORT_STATE_TABLE_NAME"));
+        consumer->addToSync(entries);
+        static_cast<Orch *>(this->stpOrch.get())->doTask(*consumer); 
+
+        std::cout << "3 done" << std::endl;
+        entries.clear();
+        entries.push_back({"STP_VLAN_INSTANCE_TABLE:Vlan1000", "DEL", { {} }});
+        EXPECT_CALL(mock_sai_stp_, 
+            remove_stp(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
+        consumer = dynamic_cast<Consumer *>((this->stpOrch.get())->getExecutor("APP_STP_VLAN_INSTANCE_TABLE_NAME"));
+        consumer->addToSync(entries);
+        static_cast<Orch *>(this->stpOrch.get())->doTask(*consumer); 
+
+        std::cout << "4 done" << std::endl;
         _unhook_sai_stp_api();
         _unhook_sai_vlan_api();
         _unhook_sai_fdb_api();
