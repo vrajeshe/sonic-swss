@@ -485,9 +485,19 @@ void StpOrch::doStpFastageTask(Consumer &consumer)
         auto &t = it->second;
         string op = kfvOp(t);
 
-        if (op == SET_COMMAND && fvValue(find_if(kfvFieldsValues(t), [](auto &fv){ return fvField(fv) == "state"; })) == "true")
+        if (op == SET_COMMAND)
         {
-            stpVlanFdbFlush(kfvKey(t));
+            string state;
+            for (auto i : kfvFieldsValues(t))
+            {
+                if (fvField(i) == "state")
+                    state = fvValue(i);
+            }
+
+            if(state.compare("true") == 0)
+            {
+                stpVlanFdbFlush(vlan_alias);
+            }
         }
         else if (op != DEL_COMMAND)
         {
