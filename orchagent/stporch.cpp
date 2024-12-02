@@ -37,7 +37,7 @@ StpOrch::StpOrch(DBConnector * db, DBConnector * stateDb, vector<string> &tableN
     }
     
     m_defaultStpId = attrs[0].value.oid;
-    updateMaxStpInstance(attrs[1].value.u32);
+    //updateMaxStpInstance(attrs[1].value.u32);
 };
 
 
