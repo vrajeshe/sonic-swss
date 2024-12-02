@@ -484,6 +484,7 @@ void StpOrch::doStpFastageTask(Consumer &consumer)
     {
         auto &t = it->second;
         string op = kfvOp(t);
+        string vlan_alias = kfvKey(t);
 
         if (op == SET_COMMAND)
         {
