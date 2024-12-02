@@ -27,8 +27,6 @@ StpOrch::StpOrch(DBConnector * db, DBConnector * stateDb, vector<string> &tableN
     vector<sai_attribute_t> attrs;
     attr.id = SAI_SWITCH_ATTR_DEFAULT_STP_INST_ID;
     attrs.push_back(attr);
-    attr.id = SAI_SWITCH_ATTR_MAX_STP_INSTANCE;
-    attrs.push_back(attr);
     
     std::cout << " StpOrch 2 " << std::endl;
     status = sai_switch_api->get_switch_attribute(gSwitchId, (uint32_t)attrs.size(), attrs.data());
@@ -40,7 +38,6 @@ StpOrch::StpOrch(DBConnector * db, DBConnector * stateDb, vector<string> &tableN
     }
     
     m_defaultStpId = attrs[0].value.oid;
-    //updateMaxStpInstance(attrs[1].value.u32);
     std::cout << " StpOrch 4 " << std::endl;
 };
 
