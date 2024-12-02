@@ -23,22 +23,18 @@ StpOrch::StpOrch(DBConnector * db, DBConnector * stateDb, vector<string> &tableN
 
     m_stpTable = unique_ptr<Table>(new Table(stateDb, STATE_STP_TABLE_NAME));
     
-    std::cout << " StpOrch 1 " << std::endl;
     vector<sai_attribute_t> attrs;
     attr.id = SAI_SWITCH_ATTR_DEFAULT_STP_INST_ID;
     attrs.push_back(attr);
     
-    std::cout << " StpOrch 2 " << std::endl;
     status = sai_switch_api->get_switch_attribute(gSwitchId, (uint32_t)attrs.size(), attrs.data());
     if (status != SAI_STATUS_SUCCESS)
     {
-        std::cout << " StpOrch 3 " << std::endl;
         SWSS_LOG_ERROR("Failed to get default STP instance and max STP instances , rv:%d", status);
         throw runtime_error("StpOrch initialization failure");
     }
     
     m_defaultStpId = attrs[0].value.oid;
-    std::cout << " StpOrch 4 " << std::endl;
 };
 
 
@@ -358,18 +354,6 @@ bool StpOrch::stpVlanFdbFlush(string vlan_alias)
     gFdbOrch->flushFdbByVlan(vlan_alias, 0);
     
     SWSS_LOG_NOTICE("Set STP FDB flush vlan %s ", vlan_alias.c_str());
-    return true;
-}
-
-bool StpOrch::updateMaxStpInstance(uint32_t max_stp_instances)
-{
-    SWSS_LOG_NOTICE("Max STP instances %d", (max_stp_instances - 1));
-
-    vector<FieldValueTuple> tuples;
-    FieldValueTuple tuple("max_stp_inst", to_string(max_stp_instances - 1));
-    tuples.push_back(tuple);
-    m_stpTable->set("GLOBAL", tuples);
-
     return true;
 }
 
