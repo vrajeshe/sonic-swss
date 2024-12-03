@@ -195,6 +195,11 @@ namespace stporch_test
             remove_stp_port(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         result = gStpOrch->removeStpPorts(port);
         ASSERT_TRUE(result);
+
+        EXPECT_CALL(mock_sai_stp_, 
+            remove_stp(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
+        result = gStpOrch->removeVlanFromStpInstance(VLAN_1000, stp_instance);
+        ASSERT_TRUE(result);
   
         std::cout << "Main test done" << std::endl;
 
