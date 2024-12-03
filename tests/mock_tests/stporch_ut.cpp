@@ -42,8 +42,8 @@ namespace stporch_test
     }
 
     class StpOrchTest : public MockOrchTest {
+        shared_ptr<StpOrch> stpOrch;
     protected:
-        unique_ptr<StpOrch> stpOrch;
 
         void ApplyInitialConfigs()
         {
