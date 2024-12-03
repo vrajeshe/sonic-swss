@@ -527,7 +527,7 @@ void StpOrch::doTask(Consumer &consumer)
 {
     SWSS_LOG_ENTER();
 
-    std::cout << "doStpTask 1" << std::endl;
+    std::cout << "doTask 1" << std::endl;
     if (!gPortsOrch->allPortsReady())
     {
         return;
