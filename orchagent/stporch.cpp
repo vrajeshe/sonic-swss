@@ -369,10 +369,12 @@ void StpOrch::doStpTask(Consumer &consumer)
         string vlan_alias = kfvKey(t);
         string op = kfvOp(t);
 
+        std::cout << "op " << op << std::endl;
         if (op == SET_COMMAND)
         {
             uint16_t instance = STP_INVALID_INSTANCE;
 
+            std::cout << "1 "  << std::endl;
             for (auto i : kfvFieldsValues(t))
             {
                 if (fvField(i) == "stp_instance")
@@ -383,10 +385,12 @@ void StpOrch::doStpTask(Consumer &consumer)
 
             if(instance == STP_INVALID_INSTANCE)
             {
+                std::cout << "2 "  << std::endl;
                 SWSS_LOG_ERROR("No instance found for VLAN %s", vlan_alias.c_str());
             }
             else
             {
+                std::cout << "3 "  << std::endl;
                 if(!addVlanToStpInstance(vlan_alias, instance))
                 {
                     it++;
@@ -521,6 +525,7 @@ void StpOrch::doTask(Consumer &consumer)
     string table_name = consumer.getTableName();
     if (table_name == APP_STP_VLAN_INSTANCE_TABLE_NAME)
     {
+        std::cout << "doStpTask" << std::endl;
         doStpTask(consumer);
     }
     else if (table_name == APP_STP_PORT_STATE_TABLE_NAME)
