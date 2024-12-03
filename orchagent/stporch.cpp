@@ -369,7 +369,7 @@ void StpOrch::doStpTask(Consumer &consumer)
         string vlan_alias = kfvKey(t);
         string op = kfvOp(t);
 
-        std::cout << "op " << op << std::endl;
+        std::cout << "doStpTask op " << op << std::endl;
         if (op == SET_COMMAND)
         {
             uint16_t instance = STP_INVALID_INSTANCE;
@@ -393,6 +393,7 @@ void StpOrch::doStpTask(Consumer &consumer)
                 std::cout << "3 "  << std::endl;
                 if(!addVlanToStpInstance(vlan_alias, instance))
                 {
+                    std::cout << "4 "  << std::endl;
                     it++;
                     continue;
                 }
@@ -410,6 +411,7 @@ void StpOrch::doStpTask(Consumer &consumer)
         {
             SWSS_LOG_ERROR("Unknown operation type %s", op.c_str());
         }
+        std::cout << "5 "  << std::endl;
         it = consumer.m_toSync.erase(it);
     }
 }
@@ -418,6 +420,7 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
 {
     SWSS_LOG_ENTER();
 
+    std::cout << "doStpPortStateTask 1 "  << std::endl;
     auto it = consumer.m_toSync.begin();
     while (it != consumer.m_toSync.end())
     {
@@ -447,27 +450,28 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
 
         if (op == SET_COMMAND)
         {
+            std::cout << "3 "  << std::endl;
             uint8_t state = STP_STATE_INVALID;
 
             for (auto i : kfvFieldsValues(t))
             {
                 if (fvField(i) == "state")
                 {
-                    std::cout << "3 "  << std::endl;
+                    std::cout << "4 "  << std::endl;
                     state = (uint8_t)std::stoi(fvValue(i));
                 }
             }
-            std::cout << "4 "  << std::endl;
+            std::cout << "5 "  << std::endl;
             if(state == STP_STATE_INVALID)
             {
                 SWSS_LOG_ERROR("No stp state found for instance %u port %s", instance, port_alias.c_str());
             }
             else
             {
-                std::cout << "5 "  << std::endl;
+                std::cout << "6 "  << std::endl;
                 if(!updateStpPortState(port, instance, state))
                 {
-                    std::cout << "6 "  << std::endl;
+                    std::cout << "7 "  << std::endl;
                     it++;
                     continue;
                 }
@@ -481,7 +485,7 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
                 continue;
             }
         }
-        std::cout << "7 "  << std::endl;
+        std::cout << "8 "  << std::endl;
         it = consumer.m_toSync.erase(it);
     }
 }
