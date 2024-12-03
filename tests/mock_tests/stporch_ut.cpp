@@ -200,7 +200,7 @@ namespace stporch_test
         std::cout << "Main test done" << std::endl;
 
         std::deque<KeyOpFieldsValuesTuple> entries;
-        entries.push_back({"STP_VLAN_INSTANCE_TABLE:Vlan1000", "SET", { {"stp_instance", "1"}}})
+        entries.push_back({"STP_VLAN_INSTANCE_TABLE:Vlan1000", "SET", { {"stp_instance", "1"}}});
         EXPECT_CALL(mock_sai_stp_, 
             create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
@@ -216,7 +216,7 @@ namespace stporch_test
         EXPECT_CALL(mock_sai_stp_, 
             set_stp_port_attribute(_,_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         port.m_bridge_port_id = 1234; 
-        entries.push_back({"STP_PORT_STATE_TABLE:Ethernet0:1", "SET", { {"state", "4"}}})
+        entries.push_back({"STP_PORT_STATE_TABLE:Ethernet0:1", "SET", { {"state", "4"}}});
         consumer = dynamic_cast<Consumer *>((this->stpOrch.get())->getExecutor("APP_STP_PORT_STATE_TABLE_NAME"));
         consumer->addToSync(entries);
         static_cast<Orch *>(this->stpOrch.get())->doTask(*consumer); 
