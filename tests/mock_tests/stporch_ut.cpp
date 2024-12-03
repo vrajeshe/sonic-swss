@@ -234,7 +234,7 @@ namespace stporch_test
 
         std::cout << "6 done" << std::endl;
         entries.clear();
-        entries.push_back({"\Vlan1000", "DEL", { {} }});
+        entries.push_back({"Vlan1000", "DEL", { {} }});
         EXPECT_CALL(mock_sai_stp_, 
             remove_stp(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         consumer = dynamic_cast<Consumer *>(gStpOrch->getExecutor("STP_VLAN_INSTANCE_TABLE"));
