@@ -427,6 +427,7 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
         /* Return if the format of key is wrong */
         if (found == string::npos)
         {
+            std::cout << "1 "  << std::endl;
             SWSS_LOG_ERROR("Failed to parse %s", key.c_str());
             return;
         }
@@ -437,6 +438,7 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
 
         if (!gPortsOrch->getPort(port_alias, port))
         {
+            std::cout << "2 "  << std::endl;
             SWSS_LOG_ERROR("Failed to get port for %s alias", port_alias.c_str());
             return;
         }
@@ -451,18 +453,21 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
             {
                 if (fvField(i) == "state")
                 {
+                    std::cout << "3 "  << std::endl;
                     state = (uint8_t)std::stoi(fvValue(i));
                 }
             }
-
+            std::cout << "4 "  << std::endl;
             if(state == STP_STATE_INVALID)
             {
                 SWSS_LOG_ERROR("No stp state found for instance %u port %s", instance, port_alias.c_str());
             }
             else
             {
+                std::cout << "5 "  << std::endl;
                 if(!updateStpPortState(port, instance, state))
                 {
+                    std::cout << "6 "  << std::endl;
                     it++;
                     continue;
                 }
@@ -476,6 +481,7 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
                 continue;
             }
         }
+        std::cout << "7 "  << std::endl;
         it = consumer.m_toSync.erase(it);
     }
 }
@@ -517,7 +523,7 @@ void StpOrch::doTask(Consumer &consumer)
 {
     SWSS_LOG_ENTER();
 
-     std::cout << "doStpTask 1" << std::endl;
+    std::cout << "doStpTask 1" << std::endl;
     if (!gPortsOrch->allPortsReady())
     {
         return;
@@ -528,6 +534,7 @@ void StpOrch::doTask(Consumer &consumer)
     {
         std::cout << "doStpTask 2" << std::endl;
         doStpTask(consumer);
+        std::cout << "doStpTask done" << std::endl;
     }
     else if (table_name == APP_STP_PORT_STATE_TABLE_NAME)
     {
