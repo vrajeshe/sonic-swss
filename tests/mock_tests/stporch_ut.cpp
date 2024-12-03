@@ -42,9 +42,8 @@ namespace stporch_test
     }
 
     class StpOrchTest : public MockOrchTest {
-        shared_ptr<StpOrch> stpOrch;
     protected:
-
+        shared_ptr<StpOrch> stpOrch;
         void ApplyInitialConfigs()
         {
             Table port_table = Table(m_app_db.get(), APP_PORT_TABLE_NAME);
