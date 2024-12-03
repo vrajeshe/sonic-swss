@@ -206,7 +206,7 @@ namespace stporch_test
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
         auto consumer = dynamic_cast<Consumer *>(stpOrch->getExecutor("APP_STP_VLAN_INSTANCE_TABLE_NAME"));
         consumer->addToSync(entries);
-        static_cast<Orch *>(stpOrch->doTask(*consumer)); 
+        static_cast<Orch *>(stpOrch)->doTask(); 
 
         std::cout << "1 done" << std::endl;
         entries.clear();
@@ -219,7 +219,7 @@ namespace stporch_test
         entries.push_back({"STP_PORT_STATE_TABLE:Ethernet0:1", "SET", { {"state", "4"}}});
         consumer = dynamic_cast<Consumer *>(stpOrch->getExecutor("APP_STP_PORT_STATE_TABLE_NAME"));
         consumer->addToSync(entries);
-        static_cast<Orch *>(stpOrch->doTask(*consumer));
+        static_cast<Orch *>(stpOrch)->doTask();
         
         std::cout << "2 done" << std::endl;
         entries.clear();
@@ -228,7 +228,7 @@ namespace stporch_test
             remove_stp_port(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         consumer = dynamic_cast<Consumer *>(stpOrch->getExecutor("APP_STP_PORT_STATE_TABLE_NAME"));
         consumer->addToSync(entries);
-        static_cast<Orch *>(stpOrch->doTask(*consumer)); 
+        static_cast<Orch *>(stpOrch)->doTask(); 
 
         std::cout << "3 done" << std::endl;
         entries.clear();
@@ -237,7 +237,7 @@ namespace stporch_test
             remove_stp(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         consumer = dynamic_cast<Consumer *>(stpOrch->getExecutor("APP_STP_VLAN_INSTANCE_TABLE_NAME"));
         consumer->addToSync(entries);
-        static_cast<Orch *>(stpOrch->doTask(*consumer)); 
+        static_cast<Orch *>(stpOrch)->doTask(); 
 
         std::cout << "4 done" << std::endl;
         _unhook_sai_stp_api();
