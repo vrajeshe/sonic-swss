@@ -204,7 +204,8 @@ namespace stporch_test
             create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
         std::cout << "1 done" << std::endl;
-        auto consumer = dynamic_cast<Consumer *>(gStpOrch->getExecutor("APP_STP_VLAN_INSTANCE_TABLE_NAME"));
+       
+        auto consumer = dynamic_cast<Consumer *>(gStpOrch->getExecutor("STP_VLAN_INSTANCE_TABLE"));
         std::cout << "2 done" << std::endl;
         consumer->addToSync(entries);
         std::cout << "3 done" << std::endl;
@@ -219,7 +220,7 @@ namespace stporch_test
             set_stp_port_attribute(_,_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         port.m_bridge_port_id = 1234; 
         entries.push_back({"STP_PORT_STATE_TABLE:Ethernet0:1", "SET", { {"state", "4"}}});
-        consumer = dynamic_cast<Consumer *>(gStpOrch->getExecutor("APP_STP_PORT_STATE_TABLE_NAME"));
+        consumer = dynamic_cast<Consumer *>(gStpOrch->getExecutor("STP_PORT_STATE_TABLE"));
         consumer->addToSync(entries);
         static_cast<Orch *>(gStpOrch)->doTask();
         
