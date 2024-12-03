@@ -517,6 +517,7 @@ void StpOrch::doTask(Consumer &consumer)
 {
     SWSS_LOG_ENTER();
 
+     std::cout << "doStpTask 1" << std::endl;
     if (!gPortsOrch->allPortsReady())
     {
         return;
@@ -525,7 +526,7 @@ void StpOrch::doTask(Consumer &consumer)
     string table_name = consumer.getTableName();
     if (table_name == APP_STP_VLAN_INSTANCE_TABLE_NAME)
     {
-        std::cout << "doStpTask" << std::endl;
+        std::cout << "doStpTask 2" << std::endl;
         doStpTask(consumer);
     }
     else if (table_name == APP_STP_PORT_STATE_TABLE_NAME)
