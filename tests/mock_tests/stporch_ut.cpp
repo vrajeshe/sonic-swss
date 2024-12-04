@@ -144,12 +144,14 @@ namespace stporch_test
         sai_stp_api->set_stp_port_attribute = mock_set_stp_port_attribute;
 
         Port port;
+        Port port1;
         sai_uint16_t stp_instance = 1;
         sai_object_id_t stp_port_oid = 67890;
         sai_object_id_t stp_oid = 98765;
         bool result;
 
         ASSERT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
+        ASSERT_TRUE(gPortsOrch->getPort(ETHERNET1, port1));
 
         EXPECT_CALL(mock_sai_stp_, 
             create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
@@ -175,25 +177,17 @@ namespace stporch_test
         ASSERT_TRUE(result);
 
         EXPECT_CALL(mock_sai_stp_, 
-            remove_stp(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
-        result = gStpOrch->removeVlanFromStpInstance(VLAN_1000, stp_instance);
-        ASSERT_TRUE(result);
-
-        EXPECT_CALL(mock_sai_stp_, 
-            create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
-                                        ::testing::Return(SAI_STATUS_SUCCESS)));
-        EXPECT_CALL(mock_sai_stp_, 
             create_stp_port(_, _, 3, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
         EXPECT_CALL(mock_sai_stp_, 
             set_stp_port_attribute(_,_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
-        port.m_bridge_port_id = 1234;
-        result = gStpOrch->updateStpPortState(port, stp_instance, STP_STATE_BLOCKING);
+        port1.m_bridge_port_id = 1111;
+        result = gStpOrch->updateStpPortState(port1, stp_instance, STP_STATE_BLOCKING);
         ASSERT_TRUE(result);
 
         EXPECT_CALL(mock_sai_stp_, 
             remove_stp_port(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
-        result = gStpOrch->removeStpPorts(port);
+        result = gStpOrch->removeStpPorts(port1);
         ASSERT_TRUE(result);
 
         EXPECT_CALL(mock_sai_stp_, 
