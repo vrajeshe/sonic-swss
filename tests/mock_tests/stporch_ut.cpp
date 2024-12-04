@@ -151,7 +151,7 @@ namespace stporch_test
         bool result;
 
         ASSERT_TRUE(gPortsOrch->getPort(ETHERNET0, port));
-        ASSERT_TRUE(gPortsOrch->getPort(ETHERNET1, port1));
+        ASSERT_TRUE(gPortsOrch->getPort(ETHERNET4, port1));
 
         EXPECT_CALL(mock_sai_stp_, 
             create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
