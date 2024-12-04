@@ -369,12 +369,10 @@ void StpOrch::doStpTask(Consumer &consumer)
         string vlan_alias = kfvKey(t);
         string op = kfvOp(t);
 
-        std::cout << "doStpTask op " << op << std::endl;
         if (op == SET_COMMAND)
         {
             uint16_t instance = STP_INVALID_INSTANCE;
 
-            std::cout << "1 "  << std::endl;
             for (auto i : kfvFieldsValues(t))
             {
                 if (fvField(i) == "stp_instance")
@@ -385,15 +383,12 @@ void StpOrch::doStpTask(Consumer &consumer)
 
             if(instance == STP_INVALID_INSTANCE)
             {
-                std::cout << "2 "  << std::endl;
                 SWSS_LOG_ERROR("No instance found for VLAN %s", vlan_alias.c_str());
             }
             else
             {
-                std::cout << "3 "  << std::endl;
                 if(!addVlanToStpInstance(vlan_alias, instance))
                 {
-                    std::cout << "4 "  << std::endl;
                     it++;
                     continue;
                 }
@@ -411,7 +406,6 @@ void StpOrch::doStpTask(Consumer &consumer)
         {
             SWSS_LOG_ERROR("Unknown operation type %s", op.c_str());
         }
-        std::cout << "5 "  << std::endl;
         it = consumer.m_toSync.erase(it);
     }
 }
@@ -420,7 +414,6 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
 {
     SWSS_LOG_ENTER();
 
-    std::cout << "doStpPortStateTask 1 "  << std::endl;
     auto it = consumer.m_toSync.begin();
     while (it != consumer.m_toSync.end())
     {
@@ -430,7 +423,6 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
         /* Return if the format of key is wrong */
         if (found == string::npos)
         {
-            std::cout << "1 "  << std::endl;
             SWSS_LOG_ERROR("Failed to parse %s", key.c_str());
             return;
         }
@@ -441,7 +433,6 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
 
         if (!gPortsOrch->getPort(port_alias, port))
         {
-            std::cout << "2 "  << std::endl;
             SWSS_LOG_ERROR("Failed to get port for %s alias", port_alias.c_str());
             return;
         }
@@ -450,28 +441,23 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
 
         if (op == SET_COMMAND)
         {
-            std::cout << "3 "  << std::endl;
             uint8_t state = STP_STATE_INVALID;
 
             for (auto i : kfvFieldsValues(t))
             {
                 if (fvField(i) == "state")
                 {
-                    std::cout << "4 "  << std::endl;
                     state = (uint8_t)std::stoi(fvValue(i));
                 }
             }
-            std::cout << "5 "  << std::endl;
             if(state == STP_STATE_INVALID)
             {
                 SWSS_LOG_ERROR("No stp state found for instance %u port %s", instance, port_alias.c_str());
             }
             else
             {
-                std::cout << "6 "  << std::endl;
                 if(!updateStpPortState(port, instance, state))
                 {
-                    std::cout << "7 "  << std::endl;
                     it++;
                     continue;
                 }
@@ -485,7 +471,6 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
                 continue;
             }
         }
-        std::cout << "8 "  << std::endl;
         it = consumer.m_toSync.erase(it);
     }
 }
@@ -527,7 +512,6 @@ void StpOrch::doTask(Consumer &consumer)
 {
     SWSS_LOG_ENTER();
 
-    std::cout << "doTask 1" << std::endl;
     if (!gPortsOrch->allPortsReady())
     {
         return;
@@ -536,9 +520,7 @@ void StpOrch::doTask(Consumer &consumer)
     string table_name = consumer.getTableName();
     if (table_name == APP_STP_VLAN_INSTANCE_TABLE_NAME)
     {
-        std::cout << "doStpTask 2" << std::endl;
         doStpTask(consumer);
-        std::cout << "doStpTask done" << std::endl;
     }
     else if (table_name == APP_STP_PORT_STATE_TABLE_NAME)
     {

@@ -194,23 +194,17 @@ namespace stporch_test
             remove_stp(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
         result = gStpOrch->removeVlanFromStpInstance(VLAN_1000, stp_instance);
         ASSERT_TRUE(result);
-  
-        std::cout << "Main test done" << std::endl;
 
         std::deque<KeyOpFieldsValuesTuple> entries;
         entries.push_back({"Vlan1000", "SET", { {"stp_instance", "1"}}});
         EXPECT_CALL(mock_sai_stp_, 
             create_stp(_, _, _, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_oid),
                                         ::testing::Return(SAI_STATUS_SUCCESS)));
-        std::cout << "1 done" << std::endl;
        
         auto consumer = dynamic_cast<Consumer *>(gStpOrch->getExecutor("STP_VLAN_INSTANCE_TABLE"));
-        std::cout << "2 done" << std::endl;
         consumer->addToSync(entries);
-        std::cout << "3 done" << std::endl;
         static_cast<Orch *>(gStpOrch)->doTask();
 
-        std::cout << "4 done" << std::endl;
         entries.clear();
         EXPECT_CALL(mock_sai_stp_, 
             create_stp_port(_, _, 3, _)).WillOnce(::testing::DoAll(::testing::SetArgPointee<0>(stp_port_oid),
@@ -222,7 +216,6 @@ namespace stporch_test
         consumer->addToSync(entries);
         static_cast<Orch *>(gStpOrch)->doTask();
         
-        std::cout << "5 done" << std::endl;
         entries.clear();
         entries.push_back({"Ethernet0:1", "DEL", { {} }});
         EXPECT_CALL(mock_sai_stp_, 
@@ -231,7 +224,6 @@ namespace stporch_test
         consumer->addToSync(entries);
         static_cast<Orch *>(gStpOrch)->doTask();
 
-        std::cout << "6 done" << std::endl;
         entries.clear();
         entries.push_back({"Vlan1000", "DEL", { {} }});
         EXPECT_CALL(mock_sai_stp_, 
@@ -239,8 +231,7 @@ namespace stporch_test
         consumer = dynamic_cast<Consumer *>(gStpOrch->getExecutor("STP_VLAN_INSTANCE_TABLE"));
         consumer->addToSync(entries);
         static_cast<Orch *>(gStpOrch)->doTask();
-
-        std::cout << "7 done" << std::endl;
+ 
         _unhook_sai_stp_api();
         _unhook_sai_vlan_api();
         _unhook_sai_fdb_api();
