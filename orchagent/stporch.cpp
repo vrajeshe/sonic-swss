@@ -77,7 +77,6 @@ bool StpOrch::removeStpInstance(sai_uint16_t stp_instance)
     stp_oid = getStpInstanceOid(stp_instance);
     if (stp_oid == SAI_NULL_OBJECT_ID)
     {
-        SWSS_LOG_ERROR("Failed to find oid for STP instance %u", stp_instance);
         return false;
     }
     
@@ -132,7 +131,6 @@ bool StpOrch::addVlanToStpInstance(string vlan_alias, sai_uint16_t stp_instance)
     attr.value.oid = stp_oid;
 
     sai_status_t status = sai_vlan_api->set_vlan_attribute(vlan.m_vlan_info.vlan_oid, &attr);
-
     if (status != SAI_STATUS_SUCCESS)
     {
         SWSS_LOG_ERROR("Failed to add VLAN %s to STP instance:%hu status %u", vlan_alias.c_str(), stp_instance, status);
@@ -161,7 +159,6 @@ bool StpOrch::removeVlanFromStpInstance(string vlan_alias, sai_uint16_t stp_inst
     attr.value.oid = m_defaultStpId;
 
     sai_status_t status = sai_vlan_api->set_vlan_attribute(vlan.m_vlan_info.vlan_oid, &attr);
-
     if (status != SAI_STATUS_SUCCESS)
     {
         SWSS_LOG_ERROR("Failed to add VLAN %s to STP instance:%d status %u", vlan_alias.c_str(), vlan.m_stp_id, status);
@@ -207,7 +204,6 @@ sai_object_id_t StpOrch::addStpPort(Port &port, sai_uint16_t stp_instance)
         stp_id = addStpInstance(stp_instance);
         if(stp_id == SAI_NULL_OBJECT_ID)
         {
-            SWSS_LOG_ERROR("Failed to add STP instance %d for port %s", stp_instance, port.m_alias.c_str());
             return SAI_NULL_OBJECT_ID;
         }
     }
@@ -314,7 +310,6 @@ bool StpOrch::updateStpPortState(Port &port, sai_uint16_t stp_instance, sai_uint
     sai_object_id_t stp_port_oid;
 
     stp_port_oid = addStpPort(port, stp_instance);
-
     if (stp_port_oid == SAI_NULL_OBJECT_ID)
     {
         SWSS_LOG_ERROR("Failed to get STP port oid port %s instance %d state %d ", port.m_alias.c_str(), stp_instance, stp_state);
@@ -397,10 +392,6 @@ void StpOrch::doStpTask(Consumer &consumer)
                 continue;
             }
         }
-        else
-        {
-            SWSS_LOG_ERROR("Unknown operation type %s", op.c_str());
-        }
         it = consumer.m_toSync.erase(it);
     }
 }
@@ -418,7 +409,6 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
         /* Return if the format of key is wrong */
         if (found == string::npos)
         {
-            SWSS_LOG_ERROR("Failed to parse %s", key.c_str());
             return;
         }
         string port_alias = key.substr(0, found);
@@ -428,7 +418,6 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
 
         if (!gPortsOrch->getPort(port_alias, port))
         {
-            SWSS_LOG_ERROR("Failed to get port for %s alias", port_alias.c_str());
             return;
         }
 
@@ -445,11 +434,7 @@ void StpOrch::doStpPortStateTask(Consumer &consumer)
                     state = (uint8_t)std::stoi(fvValue(i));
                 }
             }
-            if(state == STP_STATE_INVALID)
-            {
-                SWSS_LOG_ERROR("No stp state found for instance %u port %s", instance, port_alias.c_str());
-            }
-            else
+            if(state != STP_STATE_INVALID)
             {
                 if(!updateStpPortState(port, instance, state))
                 {
@@ -494,9 +479,9 @@ void StpOrch::doStpFastageTask(Consumer &consumer)
                 stpVlanFdbFlush(vlan_alias);
             }
         }
-        else if (op != DEL_COMMAND)
+        else if (op == DEL_COMMAND)
         {
-            SWSS_LOG_ERROR("Unknown operation type %s", op.c_str());
+            // no operation
         }
 
         it = consumer.m_toSync.erase(it);
