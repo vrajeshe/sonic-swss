@@ -1138,7 +1138,7 @@ void FdbOrch::flushFDBEntries(sai_object_id_t bridge_port_oid,
         }
     }
 }
-void FdbOrch::flushFdbByVlan(const string &alias, bool flush_static)
+void FdbOrch::flushFdbByVlan(const string &alias)
 {
     sai_status_t status;
     swss::Port vlan;
@@ -1146,32 +1146,25 @@ void FdbOrch::flushFdbByVlan(const string &alias, bool flush_static)
 
     if (!m_portsOrch->getPort(alias, vlan))
     {
-        SWSS_LOG_NOTICE("could not locate vlan from alias %s", alias.c_str());
         return;
     }
-    SWSS_LOG_NOTICE("Start: Flush by vlan %s vlan_oid 0x%" PRIx64 " flush_static %d",
-            alias.c_str(), vlan.m_vlan_info.vlan_oid, flush_static);
+    SWSS_LOG_NOTICE("Start: Flush by vlan %s vlan_oid 0x%" PRIx64 " ",
+            alias.c_str(), vlan.m_vlan_info.vlan_oid);
 
     vlan_attr[0].id = SAI_FDB_FLUSH_ATTR_BV_ID;
     vlan_attr[0].value.oid = vlan.m_vlan_info.vlan_oid;
-    if (!flush_static)
-    {
-        vlan_attr[1].id = SAI_FDB_FLUSH_ATTR_ENTRY_TYPE;
-        vlan_attr[1].value.s32 = SAI_FDB_FLUSH_ENTRY_TYPE_DYNAMIC;
-        status = sai_fdb_api->flush_fdb_entries(gSwitchId, 2, vlan_attr);
-    }
-    else
-    {
-    	status = sai_fdb_api->flush_fdb_entries(gSwitchId, 1, vlan_attr);
-    }
+    vlan_attr[1].id = SAI_FDB_FLUSH_ATTR_ENTRY_TYPE;
+    vlan_attr[1].value.s32 = SAI_FDB_FLUSH_ENTRY_TYPE_DYNAMIC;
+    status = sai_fdb_api->flush_fdb_entries(gSwitchId, 2, vlan_attr);
+  
     if (status != SAI_STATUS_SUCCESS)
     {
         SWSS_LOG_ERROR("Flush fdb failed, return code %x", status);
     }
     else
     {
-        SWSS_LOG_NOTICE("End: Flush by vlan %s vlan_oid 0x%" PRIx64 " flush_static %d",
-                    alias.c_str(), vlan.m_vlan_info.vlan_oid, flush_static);
+        SWSS_LOG_NOTICE("End: Flush by vlan %s vlan_oid 0x%" PRIx64 "",
+                    alias.c_str(), vlan.m_vlan_info.vlan_oid);
     }
 
     return;

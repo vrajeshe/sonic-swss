@@ -30,7 +30,6 @@ StpOrch::StpOrch(DBConnector * db, DBConnector * stateDb, vector<string> &tableN
     status = sai_switch_api->get_switch_attribute(gSwitchId, (uint32_t)attrs.size(), attrs.data());
     if (status != SAI_STATUS_SUCCESS)
     {
-        SWSS_LOG_ERROR("Failed to get default STP instance and max STP instances , rv:%d", status);
         throw runtime_error("StpOrch initialization failure");
     }
     
@@ -118,7 +117,6 @@ bool StpOrch::addVlanToStpInstance(string vlan_alias, sai_uint16_t stp_instance)
 
     if (!gPortsOrch->getPort(vlan_alias, vlan))
     {
-        SWSS_LOG_INFO("Failed to locate VLAN %s", vlan_alias.c_str());
         return false;
     }
     
@@ -156,7 +154,6 @@ bool StpOrch::removeVlanFromStpInstance(string vlan_alias, sai_uint16_t stp_inst
 
     if (!gPortsOrch->getPort(vlan_alias, vlan))
     {
-        SWSS_LOG_INFO("Failed to locate VLAN %s", vlan_alias.c_str());
         return false;
     }
 
@@ -269,7 +266,6 @@ bool StpOrch::removeStpPorts(Port &port)
 
         if(stp_port_oid == SAI_NULL_OBJECT_ID)
         {
-            SWSS_LOG_ERROR("Failed to find STP port %s instance %d", port.m_alias.c_str(), stp_instance);
             continue;
         }
 
@@ -347,11 +343,10 @@ bool StpOrch::stpVlanFdbFlush(string vlan_alias)
 
     if (!gPortsOrch->getPort(vlan_alias, vlan))
     {
-        SWSS_LOG_INFO("Failed to locate VLAN %s", vlan_alias.c_str());
         return false;
     }
 
-    gFdbOrch->flushFdbByVlan(vlan_alias, 0);
+    gFdbOrch->flushFdbByVlan(vlan_alias);
     
     SWSS_LOG_NOTICE("Set STP FDB flush vlan %s ", vlan_alias.c_str());
     return true;

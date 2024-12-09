@@ -217,6 +217,13 @@ namespace stporch_test
         static_cast<Orch *>(gStpOrch)->doTask();
         
         entries.clear();
+        entries.push_back({"Ethernet0:1", "SET", { {"state", "4"}}});
+        consumer = dynamic_cast<Consumer *>(gStpOrch->getExecutor("STP_FASTAGEING_FLUSH_TABLE"));
+        consumer->addToSync(entries);
+        static_cast<Orch *>(gStpOrch)->doTask();
+
+
+        entries.clear();
         entries.push_back({"Ethernet0:1", "DEL", { {} }});
         EXPECT_CALL(mock_sai_stp_, 
             remove_stp_port(_)).WillOnce(::testing::Return(SAI_STATUS_SUCCESS));
