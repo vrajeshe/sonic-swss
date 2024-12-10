@@ -1148,8 +1148,6 @@ void FdbOrch::flushFdbByVlan(const string &alias)
     {
         return;
     }
-    SWSS_LOG_NOTICE("Start: Flush by vlan %s vlan_oid 0x%" PRIx64 " ",
-            alias.c_str(), vlan.m_vlan_info.vlan_oid);
 
     vlan_attr[0].id = SAI_FDB_FLUSH_ATTR_BV_ID;
     vlan_attr[0].value.oid = vlan.m_vlan_info.vlan_oid;
