@@ -6247,8 +6247,8 @@ bool PortsOrch::removeBridgePort(Port &port)
                 hostif_vlan_tag[SAI_HOSTIF_VLAN_TAG_STRIP], port.m_alias.c_str());
         return false;
     }
-
-
+    
+    /* Remove STP ports before bridge port deletion*/
     gStpOrch->removeStpPorts(port);
 
     //Flush the FDB entires corresponding to the port

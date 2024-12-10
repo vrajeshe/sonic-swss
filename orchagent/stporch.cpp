@@ -66,7 +66,7 @@ sai_object_id_t StpOrch::addStpInstance(sai_uint16_t stp_instance)
     }
     
     m_stpInstToOid[stp_instance] = stp_oid;
-    SWSS_LOG_NOTICE("Added STP instance:%hu oid:%" PRIx64 "", stp_instance, stp_oid);
+    SWSS_LOG_INFO("Added STP instance:%hu oid:%" PRIx64 "", stp_instance, stp_oid);
     return stp_oid;
 }
 
@@ -102,7 +102,7 @@ bool StpOrch::removeStpInstance(sai_uint16_t stp_instance)
     }
 
     m_stpInstToOid.erase(stp_instance);
-    SWSS_LOG_NOTICE("Removed STP instance:%hu oid:%" PRIx64 "", stp_instance, stp_oid);
+    SWSS_LOG_INFO("Removed STP instance:%hu oid:%" PRIx64 "", stp_instance, stp_oid);
     return true;
 }
 
@@ -139,7 +139,7 @@ bool StpOrch::addVlanToStpInstance(string vlan_alias, sai_uint16_t stp_instance)
 
     vlan.m_stp_id = stp_instance;
     gPortsOrch->setPort(vlan_alias, vlan);
-    SWSS_LOG_NOTICE("Add VLAN %s to STP instance:%hu m_stp_id:%d", vlan_alias.c_str(), stp_instance, vlan.m_stp_id);
+    SWSS_LOG_INFO("Add VLAN %s to STP instance:%hu m_stp_id:%d", vlan_alias.c_str(), stp_instance, vlan.m_stp_id);
     return true;
 }
 
@@ -165,7 +165,7 @@ bool StpOrch::removeVlanFromStpInstance(string vlan_alias, sai_uint16_t stp_inst
         return false;
     }
 
-    SWSS_LOG_NOTICE("Remove %s from instance:%d add instance:%" PRIx64 "", vlan_alias.c_str(), vlan.m_stp_id, m_defaultStpId);
+    SWSS_LOG_INFO("Remove %s from instance:%d add instance:%" PRIx64 "", vlan_alias.c_str(), vlan.m_stp_id, m_defaultStpId);
     
     removeStpInstance(vlan.m_stp_id);
     vlan.m_stp_id = -1;
@@ -221,7 +221,7 @@ sai_object_id_t StpOrch::addStpPort(Port &port, sai_uint16_t stp_instance)
         return SAI_NULL_OBJECT_ID;
     }
 
-    SWSS_LOG_NOTICE("Add STP port %s instance %d oid %" PRIx64 " size %zu", port.m_alias.c_str(), stp_instance, stp_port_id, port.m_stp_port_ids.size());
+    SWSS_LOG_INFO("Add STP port %s instance %d oid %" PRIx64 " size %zu", port.m_alias.c_str(), stp_instance, stp_port_id, port.m_stp_port_ids.size());
     port.m_stp_port_ids[stp_instance] = stp_port_id;
     gPortsOrch->setPort(port.m_alias, port);
     return stp_port_id;
@@ -243,7 +243,7 @@ bool StpOrch::removeStpPort(Port &port, sai_uint16_t stp_instance)
         return false;
     }
 
-    SWSS_LOG_NOTICE("Remove STP port %s instance %d oid %" PRIx64 " size %zu", port.m_alias.c_str(), stp_instance, 
+    SWSS_LOG_INFO("Remove STP port %s instance %d oid %" PRIx64 " size %zu", port.m_alias.c_str(), stp_instance, 
             port.m_stp_port_ids[stp_instance], port.m_stp_port_ids.size());
     port.m_stp_port_ids.erase(stp_instance);
     gPortsOrch->setPort(port.m_alias, port);
@@ -272,7 +272,7 @@ bool StpOrch::removeStpPorts(Port &port)
         }
         else
         {
-            SWSS_LOG_NOTICE("Remove STP port %s instance %d oid %" PRIx64 "", port.m_alias.c_str(), stp_instance, stp_port_oid);
+            SWSS_LOG_INFO("Remove STP port %s instance %d oid %" PRIx64 "", port.m_alias.c_str(), stp_instance, stp_port_oid);
         }
     }
 
@@ -325,7 +325,7 @@ bool StpOrch::updateStpPortState(Port &port, sai_uint16_t stp_instance, sai_uint
         return false;
     }
     
-    SWSS_LOG_NOTICE("Set STP port state %s instance %d state %d ", port.m_alias.c_str(), stp_instance, stp_state);
+    SWSS_LOG_INFO("Set STP port state %s instance %d state %d ", port.m_alias.c_str(), stp_instance, stp_state);
 
     return true;
 }
@@ -343,7 +343,7 @@ bool StpOrch::stpVlanFdbFlush(string vlan_alias)
 
     gFdbOrch->flushFdbByVlan(vlan_alias);
     
-    SWSS_LOG_NOTICE("Set STP FDB flush vlan %s ", vlan_alias.c_str());
+    SWSS_LOG_INFO("Set STP FDB flush vlan %s ", vlan_alias.c_str());
     return true;
 }
 

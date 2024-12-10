@@ -1163,7 +1163,7 @@ void FdbOrch::flushFdbByVlan(const string &alias)
     }
     else
     {
-        SWSS_LOG_NOTICE("End: Flush by vlan %s vlan_oid 0x%" PRIx64 "",
+        SWSS_LOG_INFO("Flush by vlan %s vlan_oid 0x%" PRIx64 "",
                     alias.c_str(), vlan.m_vlan_info.vlan_oid);
     }
 
