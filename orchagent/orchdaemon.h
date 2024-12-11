@@ -47,7 +47,6 @@
 #include "srv6orch.h"
 #include "nvgreorch.h"
 #include "twamporch.h"
-#include "stporch.h"
 #include "dash/dashaclorch.h"
 #include "dash/dashorch.h"
 #include "dash/dashrouteorch.h"

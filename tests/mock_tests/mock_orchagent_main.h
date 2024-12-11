@@ -29,9 +29,6 @@
 #include "nhgorch.h"
 #include "copporch.h"
 #include "twamporch.h"
-#define private public
-#include "stporch.h"
-#undef private 
 #include "directory.h"
 
 extern int gBatchSize;
@@ -63,7 +60,6 @@ extern BfdOrch *gBfdOrch;
 extern AclOrch *gAclOrch;
 extern PolicerOrch *gPolicerOrch;
 extern TunnelDecapOrch *gTunneldecapOrch;
-extern StpOrch *gStpOrch;
 extern Directory<Orch*> gDirectory;
 
 extern sai_acl_api_t *sai_acl_api;
@@ -98,4 +94,3 @@ extern sai_tam_api_t* sai_tam_api;
 extern sai_dash_vip_api_t* sai_dash_vip_api;
 extern sai_dash_direction_lookup_api_t* sai_dash_direction_lookup_api;
 extern sai_dash_eni_api_t* sai_dash_eni_api;
-extern sai_stp_api_t* sai_stp_api;
