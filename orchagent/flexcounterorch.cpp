@@ -134,8 +134,6 @@ void FlexCounterOrch::doTask(Consumer &consumer)
 
         if (op == SET_COMMAND)
         {
-            string bulk_chunk_size;
-            string bulk_chunk_size_per_counter;
 
             for (auto valuePair:data)
             {
