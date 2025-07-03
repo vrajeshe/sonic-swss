@@ -977,6 +977,13 @@ TEST_F(FpmSyncdResponseTest, TestBlackholeRoute)
     }
 }
 
+auto create_nl_addr(const char* addr_str)
+{
+    nl_addr* addr;
+    nl_addr_parse(addr_str, AF_INET, &addr);
+    return unique_ptr<nl_addr, decltype(nl_addr_put)*>(addr, nl_addr_put);
+}
+
 auto create_route(const char* dst_addr_str)
 {
     rtnl_route* route = rtnl_route_alloc();
