@@ -43,7 +43,7 @@ TeamdCtlMgr::~TeamdCtlMgr()
             teamdctl_disconnect(tdc);
             teamdctl_free(tdc);
             SWSS_LOG_NOTICE("Exiting. Disconnecting from teamd. LAG '%s'", lag_name.c_str());
-	}
+        }
     }
 }
 
@@ -88,40 +88,40 @@ bool TeamdCtlMgr::try_add_lag(const std::string & lag_name)
     if (m_teamdUnifiedProcMode)
     {
         SWSS_LOG_NOTICE("In default. LAG='%s' will be handled via IPC.", lag_name.c_str());
-        m_handlers.emplace(lag_name, nullptr);  
+        m_handlers.emplace(lag_name, nullptr);
         return true;
     }
+    else
+    {
+        if (m_lags_to_add.find(lag_name) == m_lags_to_add.end())
+        {
+            m_lags_to_add[lag_name] = 0;
+        }
 
-    else {
-	    if (m_lags_to_add.find(lag_name) == m_lags_to_add.end())
-	    {
-	    	    m_lags_to_add[lag_name] = 0;
-	    }
-	
-	    int attempt = m_lags_to_add[lag_name];
-	    auto tdc = teamdctl_alloc();
-	    if (!tdc)
-	    {
-	    	    SWSS_LOG_ERROR("Can't allocate memory for teamdctl handler. LAG='%s'. attempt=%d", lag_name.c_str(), attempt);
-	    	    m_lags_to_add[lag_name]++;
-	    	    return false;
-	    }
-	    teamdctl_set_log_fn(tdc, &teamdctl_log_function);
-	    int err = teamdctl_connect(tdc, lag_name.c_str(), nullptr, "usock");
-	    if (err)
-	    {
-		    if (attempt != 0)
-	    	    {
-			    SWSS_LOG_WARN("Can't connect to teamd LAG='%s', error='%s'. attempt=%d", lag_name.c_str(), strerror(-err), attempt);
-	    	    }
-	    	    teamdctl_free(tdc);
-	    	    m_lags_to_add[lag_name]++;
-	    	    return false;
-	    }
-	    m_handlers.emplace(lag_name, tdc);
-	    m_lags_to_add.erase(lag_name);
-	    SWSS_LOG_NOTICE("The LAG '%s' has been added.", lag_name.c_str());
-	    return true;
+        int attempt = m_lags_to_add[lag_name];
+        auto tdc = teamdctl_alloc();
+        if (!tdc)
+        {
+            SWSS_LOG_ERROR("Can't allocate memory for teamdctl handler. LAG='%s'. attempt=%d", lag_name.c_str(), attempt);
+            m_lags_to_add[lag_name]++;
+            return false;
+        }
+        teamdctl_set_log_fn(tdc, &teamdctl_log_function);
+        int err = teamdctl_connect(tdc, lag_name.c_str(), nullptr, "usock");
+        if (err)
+        {
+            if (attempt != 0)
+            {
+                SWSS_LOG_WARN("Can't connect to teamd LAG='%s', error='%s'. attempt=%d", lag_name.c_str(), strerror(-err), attempt);
+            }
+            teamdctl_free(tdc);
+            m_lags_to_add[lag_name]++;
+            return false;
+        }
+        m_handlers.emplace(lag_name, tdc);
+        m_lags_to_add.erase(lag_name);
+        SWSS_LOG_NOTICE("The LAG '%s' has been added.", lag_name.c_str());
+        return true;
     }
 }
 
@@ -136,16 +136,17 @@ bool TeamdCtlMgr::remove_lag(const std::string & lag_name)
 
     if (has_key(lag_name))
     {
-	if (m_teamdUnifiedProcMode) 
+        if (m_teamdUnifiedProcMode)
         {
-		m_handlers.erase(lag_name);
-	}
-	else {
-		auto tdc = m_handlers[lag_name];
-	   	teamdctl_disconnect(tdc);
-		teamdctl_free(tdc);
-		m_handlers.erase(lag_name);
-	}
+            m_handlers.erase(lag_name);
+        }
+        else
+        {
+            auto tdc = m_handlers[lag_name];
+            teamdctl_disconnect(tdc);
+            teamdctl_free(tdc);
+            m_handlers.erase(lag_name);
+        }
         SWSS_LOG_NOTICE("The LAG '%s' has been removed from db.", lag_name.c_str());
     }
     else if (m_lags_to_add.find(lag_name) != m_lags_to_add.end())
@@ -203,95 +204,95 @@ TeamdCtlDump TeamdCtlMgr::get_dump(const std::string & lag_name, bool to_retry)
     TeamdCtlDump res = { false, "" };
     if (has_key(lag_name))
     {
-
-     if (m_teamdUnifiedProcMode) 
-     {
-    
-        std::string ipc_response;
-        int ret = sendIpcToTeamd("StateDump", {lag_name}, ipc_response); // Send the IPC request
-        if (ret == 0)
-
+        if (m_teamdUnifiedProcMode)
         {
-	    auto pos = ipc_response.find('{');
-            if (pos != std::string::npos)
+            std::string ipc_response;
+            int ret = sendIpcToTeamd("StateDump", {lag_name}, ipc_response); // Send the IPC request
+            if (ret == 0)
             {
-                ipc_response.erase(0, pos);
-            }
-            res = {true, ipc_response}; // Get the response from teamd via IPC
-            m_lags_err_retry.erase(lag_name); // Clear retry count on success
-        }
-        else
-        {
-            // In case of failure and retry flag is set, check if it fails for MAX_RETRY times.
-            if (to_retry)
-            {
-                if (m_lags_err_retry.find(lag_name) != m_lags_err_retry.end())
+                auto pos = ipc_response.find('{');
+                if (pos != std::string::npos)
                 {
-                    if (m_lags_err_retry[lag_name] == MAX_RETRY)
+                    ipc_response.erase(0, pos);
+                }
+                res = {true, ipc_response}; // Get the response from teamd via IPC
+                m_lags_err_retry.erase(lag_name); // Clear retry count on success
+            }
+            else
+            {
+                // In case of failure and retry flag is set, check if it fails for MAX_RETRY times.
+                if (to_retry)
+                {
+                    if (m_lags_err_retry.find(lag_name) != m_lags_err_retry.end())
                     {
-                        SWSS_LOG_ERROR("Can't get dump for LAG '%s'. Skipping", lag_name.c_str());
-                        m_lags_err_retry.erase(lag_name);
+                        if (m_lags_err_retry[lag_name] == MAX_RETRY)
+                        {
+                            SWSS_LOG_ERROR("Can't get dump for LAG '%s'. Skipping", lag_name.c_str());
+                            m_lags_err_retry.erase(lag_name);
+                        }
+                        else
+                        {
+                            m_lags_err_retry[lag_name]++;
+                        }
                     }
                     else
-                        m_lags_err_retry[lag_name]++;
+                    {
+                        // This time a different lag interface errored out.
+                        m_lags_err_retry[lag_name] = 1;
+                    }
                 }
                 else
                 {
-
-                    // This time a different lag interface errored out.
-                    m_lags_err_retry[lag_name] = 1;
+                    // No need to retry if the flag is not set.
+                    SWSS_LOG_ERROR("Can't get dump for LAG '%s'. Skipping", lag_name.c_str());
                 }
             }
-
+        }
+        else
+        {
+            auto tdc = m_handlers[lag_name];
+            char * dump;
+            int r = teamdctl_state_get_raw_direct(tdc, &dump);
+            if (r == 0)
+            {
+                res = { true, std::string(dump) };
+                // If this lag interface errored last time, remove the entry
+                if (m_lags_err_retry.find(lag_name) != m_lags_err_retry.end())
+                {
+                    SWSS_LOG_NOTICE("The LAG '%s' had errored in get_dump earlier, removing it", lag_name.c_str());
+                    m_lags_err_retry.erase(lag_name);
+                }
+            }
             else
             {
-                // No need to retry if the flag is not set.
-                SWSS_LOG_ERROR("Can't get dump for LAG '%s'. Skipping", lag_name.c_str());
+                // In case of failure and retry flag is set, check if it fails for MAX_RETRY times.
+                if (to_retry)
+                {
+                    if (m_lags_err_retry.find(lag_name) != m_lags_err_retry.end())
+                    {
+                        if (m_lags_err_retry[lag_name] == MAX_RETRY)
+                        {
+                            SWSS_LOG_ERROR("Can't get dump for LAG '%s'. Skipping", lag_name.c_str());
+                            m_lags_err_retry.erase(lag_name);
+                        }
+                        else
+                        {
+                            m_lags_err_retry[lag_name]++;
+                        }
+                    }
+                    else
+                    {
+                        // This time a different lag interface errored out.
+                        m_lags_err_retry[lag_name] = 1;
+                    }
+                }
+                else
+                {
+                    // No need to retry if the flag is not set.
+                    SWSS_LOG_ERROR("Can't get dump for LAG '%s'. Skipping", lag_name.c_str());
+                }
             }
         }
-
-     } else {
-     	     auto tdc = m_handlers[lag_name];
-       	     char * dump;
-     	     int r = teamdctl_state_get_raw_direct(tdc, &dump);
-     	     if (r == 0)
-     	     {
-	 	     res = { true, std::string(dump) };
-	 	     // If this lag interface errored last time, remove the entry
-                     if (m_lags_err_retry.find(lag_name) != m_lags_err_retry.end())
-	 	     {
-	     		     SWSS_LOG_NOTICE("The LAG '%s' had errored in get_dump earlier, removing it", lag_name.c_str());
-		     	     m_lags_err_retry.erase(lag_name);
-	 	     }
-     	     }
-     	     else
-     	     {
-	 	     // In case of failure and retry flag is set, check if it fails for MAX_RETRY times.
-                     if (to_retry)
-	 	     {
-	     		     if (m_lags_err_retry.find(lag_name) != m_lags_err_retry.end())
-	     		     {
-		 		     if (m_lags_err_retry[lag_name] == MAX_RETRY)
-		 		     {
-		     			     SWSS_LOG_ERROR("Can't get dump for LAG '%s'. Skipping", lag_name.c_str());
-		     			     m_lags_err_retry.erase(lag_name);
-		 		     }
-		 		     else
-		     			     m_lags_err_retry[lag_name]++;
-	     		     }
-	     		     else
-	     		     {
-		 		     // This time a different lag interface errored out.
-		                     m_lags_err_retry[lag_name] = 1;
-	     		     }
-	 	     }
-	 	     else
-	 	     {
-	     		     // No need to retry if the flag is not set.
-                             SWSS_LOG_ERROR("Can't get dump for LAG '%s'. Skipping", lag_name.c_str());
-	 	     }
-     	     }
-     }
     }
     else
     {
@@ -372,7 +373,7 @@ int TeamdCtlMgr::sendIpcToTeamd(const std::string& command,
     {
         buffer[received] = '\0';
         response_out = std::string(buffer);
-	SWSS_LOG_NOTICE("Response from teamd to teammgrd: %s", buffer);
+        SWSS_LOG_NOTICE("Response from teamd to teammgrd: %s", buffer);
         close(sockfd);
         return 0;
     }
