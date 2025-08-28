@@ -80,12 +80,7 @@ TeamMgr::TeamMgr(DBConnector *confDb, DBConnector *applDb, DBConnector *statDb,
         m_teamdMultiProcMode  = modeIt->second;
     }
 
-    if (m_teamdMultiProcMode == "multi-process")
-    {
-        m_teamdUnifiedProcMode = false;
-        SWSS_LOG_INFO("start multi process with teamd...");
-    }
-    else
+    if (m_teamdMultiProcMode == "unified-process")
     {
         m_teamdUnifiedProcMode = true;
         const string dump_path = "/var/warmboot/teamd/";
@@ -104,6 +99,11 @@ TeamMgr::TeamMgr(DBConnector *confDb, DBConnector *applDb, DBConnector *statDb,
         ipcInitTeamd();
 
         SWSS_LOG_INFO("start single process with teamd...");
+    }
+    else
+    {
+        m_teamdUnifiedProcMode = false;
+        SWSS_LOG_INFO("start multi process with teamd...");
     }
 
 }

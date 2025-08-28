@@ -108,7 +108,7 @@ int main()
         {
             for (const auto& fv : values)
             {
-                if (fv.first == "mode" && fv.second == "multi-process")
+                if (fv.first == "mode")
 
                 {
                     m_teamdMultiProcMode = fv.second;
@@ -116,10 +116,10 @@ int main()
                 }
             }
         }
-        if (m_teamdMultiProcMode == "multi-process") {
-            teamdctl_mgr.m_teamdUnifiedProcMode = false;
-        } else {
+        if (m_teamdMultiProcMode == "unified-process") {
             teamdctl_mgr.m_teamdUnifiedProcMode = true;
+        } else {
+            teamdctl_mgr.m_teamdUnifiedProcMode = false;
         }
 
 
