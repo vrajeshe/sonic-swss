@@ -265,12 +265,22 @@ void TeamMgr::cleanTeamProcesses()
     {
         std::string alias = "teamd-unified";
         pid_t pid;
+        stringstream cmd;
+        string res;
         // Sleep for 10 milliseconds so as to not overwhelm the netlink
         // socket buffers with events about interfaces going down
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
         try
         {
+            for (const auto& PC: m_lagList)
+            {
+                cmd << "unlink /run/teamd/" << PC << ".sock";
+                if (exec(cmd.str(), res) != 0)
+                {
+                    SWSS_LOG_INFO("Failed to delete symlink for %s", PC.c_str());
+                }
+            }
             ifstream pidFile("/var/run/teamd/" + alias + ".pid");
             if (pidFile.is_open())
             {
@@ -813,7 +823,13 @@ task_process_status TeamMgr::addLag(const string &alias, int min_links, bool fal
         {
             jsonConf = jsonConf.substr(1, jsonConf.size() - 2);
         }
-	sendIpcToTeamd("PortChannelAdd", {alias, jsonConf});
+        sendIpcToTeamd("PortChannelAdd", {alias, jsonConf});
+        cmd << "ln -s /run/teamd/teamd-unified.sock /run/teamd/" << alias << ".sock";
+        if (exec(cmd.str(), res) != 0)
+        {
+            SWSS_LOG_INFO("Failed to create symbolic link for %s", alias.c_str());
+            return task_need_retry;
+        }
     }
     else
     {
@@ -840,10 +856,18 @@ task_process_status TeamMgr::addLag(const string &alias, int min_links, bool fal
 bool TeamMgr::removeLag(const string &alias)
 {
     SWSS_LOG_ENTER();
+    stringstream cmd;
+    string res;
 
     if (m_teamdUnifiedProcMode)
     {
         sendIpcToTeamd("PortChannelRemove", { alias });
+        cmd << "unlink /run/teamd/" << alias << ".sock";
+        if (exec(cmd.str(), res) != 0)
+        {
+            SWSS_LOG_INFO("Failed to delete symlink for %s", alias.c_str());
+            return false;
+        }
     }
     else
     {
