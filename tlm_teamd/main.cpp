@@ -101,7 +101,7 @@ int main()
         swss::Table table(&config_db, "TEAMD");
         std::vector<swss::FieldValueTuple> values;
 
-        std::string m_teamdMultiProcMode = "unified";
+        std::string m_teamdMultiProcMode = "multi-process";
         bool  key_exists = table.get("GLOBAL", values);
 
         if (key_exists && !values.empty())
