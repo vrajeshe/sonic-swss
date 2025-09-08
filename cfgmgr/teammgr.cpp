@@ -69,7 +69,7 @@ TeamMgr::TeamMgr(DBConnector *confDb, DBConnector *applDb, DBConnector *statDb,
     m_mac = MacAddress(it->second);
 
     vector<FieldValueTuple> modeFvs;
-    std::string m_teamdMultiProcMode;
+    std::string m_teamdMode;
     m_cfgModeTable.get("GLOBAL", modeFvs);
     auto modeIt = find_if(modeFvs.begin(), modeFvs.end(), [](const FieldValueTuple &fv) {
          return fv.first == "mode";
@@ -77,10 +77,10 @@ TeamMgr::TeamMgr(DBConnector *confDb, DBConnector *applDb, DBConnector *statDb,
 
     if (modeIt != modeFvs.end())
     {
-        m_teamdMultiProcMode  = modeIt->second;
+        m_teamdMode  = modeIt->second;
     }
 
-    if (m_teamdMultiProcMode == "unified-process")
+    if (m_teamdMode == "unified-process")
     {
         m_teamdUnifiedProcMode = true;
         const string dump_path = "/var/warmboot/teamd/";
