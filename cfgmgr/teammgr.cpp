@@ -69,7 +69,7 @@ TeamMgr::TeamMgr(DBConnector *confDb, DBConnector *applDb, DBConnector *statDb,
     m_mac = MacAddress(it->second);
 
     vector<FieldValueTuple> modeFvs;
-    std::string m_teamdMultiProcMode;
+    std::string m_teamdMode;
     m_cfgModeTable.get("GLOBAL", modeFvs);
     auto modeIt = find_if(modeFvs.begin(), modeFvs.end(), [](const FieldValueTuple &fv) {
          return fv.first == "mode";
@@ -77,15 +77,10 @@ TeamMgr::TeamMgr(DBConnector *confDb, DBConnector *applDb, DBConnector *statDb,
 
     if (modeIt != modeFvs.end())
     {
-        m_teamdMultiProcMode  = modeIt->second;
+        m_teamdMode  = modeIt->second;
     }
 
-    if (m_teamdMultiProcMode == "multi-process")
-    {
-        m_teamdUnifiedProcMode = false;
-        SWSS_LOG_INFO("start multi process with teamd...");
-    }
-    else
+    if (m_teamdMode == "unified-process")
     {
         m_teamdUnifiedProcMode = true;
         const string dump_path = "/var/warmboot/teamd/";
@@ -104,6 +99,11 @@ TeamMgr::TeamMgr(DBConnector *confDb, DBConnector *applDb, DBConnector *statDb,
         ipcInitTeamd();
 
         SWSS_LOG_INFO("start single process with teamd...");
+    }
+    else
+    {
+        m_teamdUnifiedProcMode = false;
+        SWSS_LOG_INFO("start multi process with teamd...");
     }
 
 }
@@ -265,12 +265,22 @@ void TeamMgr::cleanTeamProcesses()
     {
         std::string alias = "teamd-unified";
         pid_t pid;
+        stringstream cmd;
+        string res;
         // Sleep for 10 milliseconds so as to not overwhelm the netlink
         // socket buffers with events about interfaces going down
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
         try
         {
+            for (const auto& PC: m_lagList)
+            {
+                cmd << "unlink /run/teamd/" << PC << ".sock";
+                if (exec(cmd.str(), res) != 0)
+                {
+                    SWSS_LOG_INFO("Failed to delete symlink for %s", PC.c_str());
+                }
+            }
             ifstream pidFile("/var/run/teamd/" + alias + ".pid");
             if (pidFile.is_open())
             {
@@ -813,7 +823,13 @@ task_process_status TeamMgr::addLag(const string &alias, int min_links, bool fal
         {
             jsonConf = jsonConf.substr(1, jsonConf.size() - 2);
         }
-	sendIpcToTeamd("PortChannelAdd", {alias, jsonConf});
+        sendIpcToTeamd("PortChannelAdd", {alias, jsonConf});
+        cmd << "ln -s /run/teamd/teamd-unified.sock /run/teamd/" << alias << ".sock";
+        if (exec(cmd.str(), res) != 0)
+        {
+            SWSS_LOG_INFO("Failed to create symbolic link for %s", alias.c_str());
+            return task_need_retry;
+        }
     }
     else
     {
@@ -840,10 +856,18 @@ task_process_status TeamMgr::addLag(const string &alias, int min_links, bool fal
 bool TeamMgr::removeLag(const string &alias)
 {
     SWSS_LOG_ENTER();
+    stringstream cmd;
+    string res;
 
     if (m_teamdUnifiedProcMode)
     {
         sendIpcToTeamd("PortChannelRemove", { alias });
+        cmd << "unlink /run/teamd/" << alias << ".sock";
+        if (exec(cmd.str(), res) != 0)
+        {
+            SWSS_LOG_INFO("Failed to delete symlink for %s", alias.c_str());
+            return false;
+        }
     }
     else
     {
