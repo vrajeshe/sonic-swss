@@ -101,7 +101,7 @@ int main()
         swss::Table table(&config_db, "TEAMD");
         std::vector<swss::FieldValueTuple> values;
 
-        std::string m_teamdMultiProcMode = "multi-process";
+        std::string m_teamdProcMode = "multi-process";
         bool  key_exists = table.get("GLOBAL", values);
 
         if (key_exists && !values.empty())
@@ -111,12 +111,12 @@ int main()
                 if (fv.first == "mode")
 
                 {
-                    m_teamdMultiProcMode = fv.second;
+                    m_teamdProcMode = fv.second;
                     break;
                 }
             }
         }
-        if (m_teamdMultiProcMode == "unified-process") {
+        if (m_teamdProcMode == "unified-process") {
             teamdctl_mgr.m_teamdUnifiedProcMode = true;
         } else {
             teamdctl_mgr.m_teamdUnifiedProcMode = false;
